@@ -26,6 +26,7 @@ Thumbs.db
 .env.development
 .env.test
 .env.production
+aurebesh-app\src\utils\supabase.ts
 
 # IDE files
 .vscode/

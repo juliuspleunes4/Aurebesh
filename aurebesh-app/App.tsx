@@ -1,20 +1,18 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { AuthProvider } from './src/context/AuthContext';
+import AppNavigator from './src/navigation/AppNavigator';
 
+/**
+ * Main App component that serves as the root of the Aurebesh learning application.
+ * Wraps the entire app with AuthProvider to manage authentication state globally.
+ * Handles navigation between auth screens and main app screens automatically.
+ */
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <AuthProvider>
       <StatusBar style="auto" />
-    </View>
+      <AppNavigator />
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
