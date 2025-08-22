@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  Button, 
+  StyleSheet, 
+  Alert, 
+  TouchableOpacity, 
+  Image, 
+  KeyboardAvoidingView,
+  Platform 
+} from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
 /**
  * RegisterScreen allows users to create an account using Supabase authentication.
- * Session persistence is handled automatically by the AuthContext.
+ * Features a modern UI with email verification and session persistence handled by AuthContext.
  */
 const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -14,16 +25,16 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   /**
    * Handles user registration using Supabase authentication.
-   * Displays appropriate success/error messages and provides email confirmation guidance.
+   * Validates input and displays appropriate success/error messages.
    */
   const handleRegister = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+      Alert.alert('Missing Information', 'Please fill in all fields.');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
+      Alert.alert('Password Too Short', 'Password must be at least 6 characters long.');
       return;
     }
 
@@ -57,75 +68,157 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create Your Account</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        editable={!loading}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password (min 6 characters)"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        editable={!loading}
-      />
-      <Button 
-        title={loading ? 'Creating Account...' : 'Register'} 
-        onPress={handleRegister} 
-        disabled={loading} 
-      />
-      
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.loginLink}>Sign in</Text>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <View style={styles.contentContainer}>
+        {/* Glow Image */}
+        <View style={styles.imageContainer}>
+          <Image 
+            source={require('../../assets/glow_happy_blue.png')} 
+            style={styles.glowImage}
+            resizeMode="contain"
+          />
+        </View>
+
+        {/* App Title */}
+        <Text style={styles.appTitle}>Aurebesh</Text>
+
+        {/* Welcome Text */}
+        <Text style={styles.welcomeText}>Welcome! Let's get you started.</Text>
+
+        {/* Input Fields */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            editable={!loading}
+            placeholderTextColor="#999"
+          />
+          
+          <TextInput
+            style={styles.input}
+            placeholder="Password (min 6 characters)"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            editable={!loading}
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        {/* Register Button */}
+        <TouchableOpacity
+          style={[styles.registerButton, loading && styles.registerButtonDisabled]}
+          onPress={handleRegister}
+          disabled={loading}
+        >
+          <Text style={styles.registerButtonText}>
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Already have account link */}
+        <TouchableOpacity 
+          style={styles.loginLinkContainer}
+          onPress={() => navigation.navigate('Login')}
+        >
+          <Text style={styles.loginLinkText}>I already have an account</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 24,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 28,
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    marginTop: -60,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  glowImage: {
+    width: 130,
+    height: 130,
+  },
+  appTitle: {
+    fontSize: 36,
     fontWeight: 'bold',
-    marginBottom: 24,
+    color: '#000',
+    marginBottom: 16,
     textAlign: 'center',
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif-medium',
+  },
+  welcomeText: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 40,
+    textAlign: 'center',
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif',
+  },
+  inputContainer: {
+    width: '100%',
+    marginBottom: 30,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
+    borderColor: '#4f81cb',
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 16,
     fontSize: 16,
+    backgroundColor: '#f8f9fa',
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif',
   },
-  loginContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
+  registerButton: {
+    backgroundColor: '#4f81cb',
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#4f81cb',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  loginText: {
-    fontSize: 16,
-    color: '#666',
+  registerButtonDisabled: {
+    backgroundColor: '#ccc',
+    shadowOpacity: 0,
+    elevation: 0,
   },
-  loginLink: {
-    fontSize: 16,
-    color: '#007AFF',
+  registerButtonText: {
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif-medium',
+  },
+  loginLinkContainer: {
+    alignItems: 'center',
+  },
+  loginLinkText: {
+    fontSize: 16,
+    color: '#999',
+    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif',
   },
 });
 
