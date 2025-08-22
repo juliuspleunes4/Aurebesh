@@ -1,0 +1,47 @@
+# Node modules
+node_modules/
+
+# Expo managed files
+.expo/
+.expo-shared/
+
+# TypeScript build output
+dist/
+build/
+
+# Metro bundler cache
+.cache/
+metro-cache/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Test coverage
+coverage/
+
+# Yarn and npm logs
+yarn-error.log
+npm-debug.log
+
+# Expo web build
+web-build/
+
+# Misc
+*.tmp
+*.bak

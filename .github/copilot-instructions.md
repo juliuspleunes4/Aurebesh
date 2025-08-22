@@ -39,7 +39,7 @@ Aurebesh
 - All components and logic should be documented.
 
 ### 4. Settings Page
-- Allow users to customize app preferences (e.g., theme, font size, learning mode).
+- Allow users to customize app preferences (e.g., theme, font size, account email, privacy settings, logout, etc.).
 - Store settings using Expo's recommended storage solution.
 - Document all settings logic and UI components.
 
