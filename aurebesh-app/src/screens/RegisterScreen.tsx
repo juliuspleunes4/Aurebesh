@@ -29,20 +29,25 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const { error } = await signUp(email, password);
+      const { error, data } = await signUp(email, password);
       if (error) {
         Alert.alert('Registration Failed', error.message);
       } else {
-        Alert.alert(
-          'Registration Successful', 
-          'Please check your email to confirm your account before logging in.',
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.navigate('Login')
-            }
-          ]
-        );
+        // Check if user was automatically logged in or needs email confirmation
+        const needsConfirmation = !data.session && data.user && !data.user.email_confirmed_at;
+        
+        if (needsConfirmation) {
+          Alert.alert(
+            'Registration Successful', 
+            'Please check your email and click the confirmation link before logging in.'
+          );
+        } else {
+          Alert.alert(
+            'Registration Successful', 
+            'Welcome to Aurebesh! You are now logged in.'
+          );
+        }
+        // AuthContext will handle navigation automatically based on session state
       }
     } catch (error) {
       Alert.alert('Error', 'An unexpected error occurred');

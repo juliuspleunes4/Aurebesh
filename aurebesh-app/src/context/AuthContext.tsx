@@ -10,7 +10,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: any }>;
-  signUp: (email: string, password: string) => Promise<{ error?: any }>;
+  signUp: (email: string, password: string) => Promise<{ error?: any; data?: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -82,14 +82,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * Sign up new user with email and password.
    * @param email - User's email address
    * @param password - User's password
-   * @returns Promise with error if sign up fails
+   * @returns Promise with error if sign up fails, and user data if successful
    */
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
-    return { error };
+    return { error, data };
   };
 
   /**
