@@ -1,7 +1,7 @@
 # Aurebesh
 
 <p align="left">
-  <img src="aurebesh-app/assets/aurebesh_readme.png" alt="Aurebesh" width="500">
+  <img src="aurebesh-app/assets/aurebesh_readme.png" alt="Aurebesh" width="250">
 </p>
 
 <p>
