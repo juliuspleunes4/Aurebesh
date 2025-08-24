@@ -712,7 +712,7 @@ const SettingsScreen: React.FC = () => {
             </View>
 
             <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
-              {'\n'}Clearing cache will remove temporary files but keep your learning progress and settings intact.
+              {'\n'}Clearing cache will remove temporary files and reset your permissions but keep your learning progress intact.
             </Text>
 
             {/* Bottom spacing */}
