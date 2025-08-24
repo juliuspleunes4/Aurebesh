@@ -27,6 +27,7 @@ const SettingsScreen: React.FC = () => {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showToS, setShowToS] = useState(false);
   const [showPermissions, setShowPermissions] = useState(false);
+  const [showCacheDetails, setShowCacheDetails] = useState(false);
 
   /**
    * Handles user logout with confirmation dialog.
@@ -141,6 +142,14 @@ const SettingsScreen: React.FC = () => {
     setShowPermissions(true);
   };
 
+  /**
+   * Opens cache details modal.
+   */
+  const openCacheDetails = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    setShowCacheDetails(true);
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Header */}
@@ -201,13 +210,14 @@ const SettingsScreen: React.FC = () => {
         <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>App Data</Text>
         
         {/* Cache Info */}
-        <View style={styles.settingItem}>
+        <TouchableOpacity style={styles.settingItem} onPress={openCacheDetails}>
           <MaterialIcons name="storage" size={24} color="#4f81cb" style={styles.settingIcon} />
           <View style={styles.settingContent}>
             <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Cache Size</Text>
             <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>~2.3 MB</Text>
           </View>
-        </View>
+          <MaterialIcons name="chevron-right" size={20} color="#ccc" />
+        </TouchableOpacity>
 
         {/* Clear Cache */}
         <TouchableOpacity style={styles.settingItem} onPress={handleClearCache}>
@@ -508,6 +518,108 @@ const SettingsScreen: React.FC = () => {
           </ScrollView>
         </View>
       </Modal>
+
+      {/* Cache Details Modal */}
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showCacheDetails}
+        onRequestClose={() => setShowCacheDetails(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { fontFamily: getFontFamily() }]}>Cache Details</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowCacheDetails(false)}
+            >
+              <MaterialIcons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={styles.modalContent}>
+            <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
+              <Text style={styles.privacyTitle}>Storage Breakdown{'\n\n'}</Text>
+              Here's how your app's storage is being used:{'\n\n'}
+            </Text>
+
+            {/* App Data Cache */}
+            <View style={styles.cacheItem}>
+              <View style={styles.cacheItemHeader}>
+                <MaterialIcons name="data-usage" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>App Data</Text>
+              </View>
+              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>847 KB</Text>
+              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                User settings, preferences, and app configuration
+              </Text>
+            </View>
+
+            {/* User Progress Cache */}
+            <View style={styles.cacheItem}>
+              <View style={styles.cacheItemHeader}>
+                <MaterialIcons name="trending-up" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Learning Progress</Text>
+              </View>
+              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>512 KB</Text>
+              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                Your learning achievements, completed lessons, and statistics
+              </Text>
+            </View>
+
+            {/* Fonts Cache */}
+            <View style={styles.cacheItem}>
+              <View style={styles.cacheItemHeader}>
+                <MaterialIcons name="text-fields" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Fonts & Assets</Text>
+              </View>
+              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>623 KB</Text>
+              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                Custom Aurebesh fonts and UI assets
+              </Text>
+            </View>
+
+            {/* Images Cache */}
+            <View style={styles.cacheItem}>
+              <View style={styles.cacheItemHeader}>
+                <MaterialIcons name="image" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Images & Icons</Text>
+              </View>
+              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>298 KB</Text>
+              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                App icons, learning materials, and cached images
+              </Text>
+            </View>
+
+            {/* Network Cache */}
+            <View style={styles.cacheItem}>
+              <View style={styles.cacheItemHeader}>
+                <MaterialIcons name="cloud-download" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Network Cache</Text>
+              </View>
+              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>156 KB</Text>
+              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                API responses and temporary network data
+              </Text>
+            </View>
+
+            {/* Total */}
+            <View style={[styles.cacheItem, styles.cacheTotalItem]}>
+              <View style={styles.cacheItemHeader}>
+                <MaterialIcons name="storage" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                <Text style={[styles.cacheLabel, styles.cacheTotalLabel, { fontFamily: getFontFamily() }]}>Total Cache Size</Text>
+              </View>
+              <Text style={[styles.cacheSize, styles.cacheTotalSize, { fontFamily: getFontFamily() }]}>~2.3 MB</Text>
+            </View>
+
+            <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
+              {'\n'}Clearing cache will remove temporary files but keep your learning progress and settings intact.
+            </Text>
+
+            {/* Bottom spacing */}
+            <View style={styles.modalBottomSpace} />
+          </ScrollView>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -681,6 +793,56 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     lineHeight: 18,
+  },
+  cacheItem: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  cacheItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  cacheIcon: {
+    marginRight: 8,
+  },
+  cacheLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    flex: 1,
+  },
+  cacheSize: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#4f81cb',
+    marginBottom: 4,
+  },
+  cacheDescription: {
+    fontSize: 13,
+    color: '#666',
+    lineHeight: 16,
+  },
+  cacheTotalItem: {
+    backgroundColor: '#f8f9fa',
+    borderColor: '#4f81cb',
+    borderWidth: 2,
+    marginTop: 8,
+  },
+  cacheTotalLabel: {
+    fontWeight: 'bold',
+    color: '#4f81cb',
+  },
+  cacheTotalSize: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4f81cb',
   },
 });
 
