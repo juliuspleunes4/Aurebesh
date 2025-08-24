@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getFontFamily } from '../utils/fonts';
@@ -35,7 +36,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
    * Validates that both email fields match before proceeding with registration.
    * @returns true if emails match, false otherwise
    */
-  const validateEmails = (): boolean => {
+  const validateEmails = async (): Promise<boolean> => {
     if (email !== confirmEmail) {
       Alert.alert('Email Mismatch', 'Please make sure both email addresses match.');
       return false;
@@ -49,25 +50,39 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
    */
   const handleRegister = async () => {
     if (!email || !confirmEmail || !password) {
+      // Haptic feedback for validation error
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Missing Information', 'Please fill in all fields.');
       return;
     }
 
-    if (!validateEmails()) {
+    if (!(await validateEmails())) {
+      // Haptic feedback for email mismatch error
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
 
     if (password.length < 6) {
+      // Haptic feedback for password validation error
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Password Too Short', 'Password must be at least 6 characters long.');
       return;
     }
+
+    // Haptic feedback for button press
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     setLoading(true);
     try {
       const { error, data } = await signUp(email, password);
       if (error) {
+        // Haptic feedback for registration error
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert('Registration Failed', error.message);
       } else {
+        // Haptic feedback for successful registration
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        
         // Check if user was automatically logged in or needs email confirmation
         const needsConfirmation = !data.session && data.user && !data.user.email_confirmed_at;
         
@@ -85,6 +100,8 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         // AuthContext will handle navigation automatically based on session state
       }
     } catch (error) {
+      // Haptic feedback for unexpected error
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -186,7 +203,10 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Already have account link */}
         <TouchableOpacity 
           style={styles.loginLinkContainer}
-          onPress={() => navigation.navigate('Login')}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate('Login');
+          }}
         >
           <Text style={styles.loginLinkText}>I already have an account</Text>
         </TouchableOpacity>

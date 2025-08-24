@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getFontFamily } from '../utils/fonts';
@@ -32,18 +33,30 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
    */
   const handleLogin = async () => {
     if (!email || !password) {
+      // Haptic feedback for validation error
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Missing Information', 'Please enter both email and password.');
       return;
     }
 
+    // Haptic feedback for button press
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
     setLoading(true);
     try {
       const { error } = await signIn(email, password);
       if (error) {
+        // Haptic feedback for login error
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert('Login Failed', error.message);
+      } else {
+        // Haptic feedback for successful login
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
       // Navigation to home screen is handled automatically by AppNavigator
     } catch (error) {
+      // Haptic feedback for unexpected error
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -125,7 +138,10 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Register link */}
         <TouchableOpacity 
           style={styles.registerLinkContainer}
-          onPress={() => navigation.navigate('Register')}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate('Register');
+          }}
         >
           <Text style={styles.registerLinkText}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
