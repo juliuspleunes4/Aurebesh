@@ -55,12 +55,6 @@ const LearnScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.comingSoonText}>
-          Full learning functionality coming soon!
-        </Text>
-      </View>
     </View>
   );
 };
@@ -188,15 +182,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
     color: '#666',
-  },
-  footer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  comingSoonText: {
-    fontSize: 14,
-    color: '#999',
-    fontStyle: 'italic',
   },
 });
 

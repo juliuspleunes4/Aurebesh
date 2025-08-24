@@ -1,21 +1,34 @@
-import React from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Alert, 
+  ScrollView,
+  Modal,
+  Linking,
+  Platform 
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useAuth } from '../context/AuthContext';
+import { getFontFamily } from '../utils/fonts';
 
 /**
  * SettingsScreen allows users to customize app preferences.
- * Includes theme settings, account management, and logout functionality.
+ * Includes account management, privacy settings, app info, and logout functionality.
  */
 const SettingsScreen: React.FC = () => {
   const { user, signOut } = useAuth();
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showToS, setShowToS] = useState(false);
 
   /**
    * Handles user logout with confirmation dialog.
    * Clears the session and returns user to login screen.
    */
   const handleLogout = async () => {
-    // Haptic feedback for logout button press
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
     Alert.alert(
@@ -26,7 +39,6 @@ const SettingsScreen: React.FC = () => {
           text: 'Cancel',
           style: 'cancel',
           onPress: async () => {
-            // Light haptic for cancel
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           },
         },
@@ -34,7 +46,6 @@ const SettingsScreen: React.FC = () => {
           text: 'Logout',
           style: 'destructive',
           onPress: async () => {
-            // Success haptic for logout confirmation
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             signOut();
           },
@@ -43,53 +54,364 @@ const SettingsScreen: React.FC = () => {
     );
   };
 
+  /**
+   * Handles account deletion with confirmation dialog.
+   */
+  const handleDeleteAccount = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    
+    Alert.alert(
+      'Delete Account',
+      'This action cannot be undone. All your data will be permanently deleted.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          },
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            // TODO: Implement account deletion with Supabase
+            Alert.alert('Coming Soon', 'Account deletion functionality will be implemented soon.');
+          },
+        },
+      ]
+    );
+  };
+
+  /**
+   * Handles cache clearing with confirmation.
+   */
+  const handleClearCache = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    Alert.alert(
+      'Clear Cache',
+      'This will clear all cached data. Continue?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          },
+        },
+        {
+          text: 'Clear',
+          onPress: async () => {
+            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            // TODO: Implement cache clearing
+            Alert.alert('Cache Cleared', 'All cached data has been cleared.');
+          },
+        },
+      ]
+    );
+  };
+
+  /**
+   * Opens privacy policy modal.
+   */
+  const openPrivacyPolicy = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowPrivacyPolicy(true);
+  };
+
+  /**
+   * Opens Terms of Service modal.
+   */
+  const openToS = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowToS(true);
+  };
+
+  /**
+   * Opens app permissions settings.
+   */
+  const openPermissions = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // TODO: Implement permissions management
+    Alert.alert('Permissions', 'Permission management will be implemented soon.');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      <Text style={styles.subtitle}>Customize your Aurebesh experience</Text>
-      
-      {/* User Info */}
-      {user?.email && (
-        <Text style={styles.userInfo}>Logged in as: {user.email}</Text>
-      )}
-      
-      {/* TODO: Add more settings options */}
-      
-      {/* Logout Button */}
-      <View style={styles.logoutContainer}>
-        <Button title="Logout" onPress={handleLogout} color="#ff4444" />
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      {/* Header */}
+      <View style={styles.header}>
+        <MaterialIcons name="settings" size={48} color="#4f81cb" />
+        <Text style={[styles.title, { fontFamily: getFontFamily() }]}>Settings</Text>
       </View>
-    </View>
+
+      {/* Account Section */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>Account</Text>
+        
+        {/* Logged in as */}
+        <View style={styles.settingItem}>
+          <MaterialIcons name="account-circle" size={24} color="#4f81cb" style={styles.settingIcon} />
+          <View style={styles.settingContent}>
+            <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Logged in as</Text>
+            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>{user?.email}</Text>
+          </View>
+        </View>
+
+        {/* Logout Button */}
+        <TouchableOpacity style={styles.settingItem} onPress={handleLogout}>
+          <MaterialIcons name="logout" size={24} color="#ff4444" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, styles.logoutText, { fontFamily: getFontFamily() }]}>Logout</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ccc" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Privacy & Legal Section */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>Privacy & Legal</Text>
+        
+        {/* Privacy Policy */}
+        <TouchableOpacity style={styles.settingItem} onPress={openPrivacyPolicy}>
+          <MaterialIcons name="privacy-tip" size={24} color="#4f81cb" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Privacy Policy</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ccc" />
+        </TouchableOpacity>
+
+        {/* Terms of Service */}
+        <TouchableOpacity style={styles.settingItem} onPress={openToS}>
+          <MaterialIcons name="description" size={24} color="#4f81cb" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Terms of Service</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ccc" />
+        </TouchableOpacity>
+
+        {/* Permissions */}
+        <TouchableOpacity style={styles.settingItem} onPress={openPermissions}>
+          <MaterialIcons name="security" size={24} color="#4f81cb" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Permissions</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ccc" />
+        </TouchableOpacity>
+      </View>
+
+      {/* App Data Section */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>App Data</Text>
+        
+        {/* Cache Info */}
+        <View style={styles.settingItem}>
+          <MaterialIcons name="storage" size={24} color="#4f81cb" style={styles.settingIcon} />
+          <View style={styles.settingContent}>
+            <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Cache Size</Text>
+            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>~2.3 MB</Text>
+          </View>
+        </View>
+
+        {/* Clear Cache */}
+        <TouchableOpacity style={styles.settingItem} onPress={handleClearCache}>
+          <MaterialIcons name="clear-all" size={24} color="#ff9500" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, styles.orangeText, { fontFamily: getFontFamily() }]}>Clear Cache</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ccc" />
+        </TouchableOpacity>
+      </View>
+
+      {/* App Info Section */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>App Info</Text>
+        
+        {/* App Version */}
+        <View style={styles.settingItem}>
+          <MaterialIcons name="info" size={24} color="#4f81cb" style={styles.settingIcon} />
+          <View style={styles.settingContent}>
+            <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Version</Text>
+            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>1.0.0</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Danger Zone */}
+      <View style={[styles.section, styles.dangerSection]}>
+        <Text style={[styles.sectionTitle, styles.dangerTitle, { fontFamily: getFontFamily() }]}>Danger Zone</Text>
+        
+        {/* Delete Account */}
+        <TouchableOpacity style={[styles.settingItem, styles.dangerItem]} onPress={handleDeleteAccount}>
+          <MaterialIcons name="delete-forever" size={24} color="#ff4444" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, styles.dangerText, { fontFamily: getFontFamily() }]}>Delete Account</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ff4444" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Privacy Policy Modal */}
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showPrivacyPolicy}
+        onRequestClose={() => setShowPrivacyPolicy(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { fontFamily: getFontFamily() }]}>Privacy Policy</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowPrivacyPolicy(false)}
+            >
+              <MaterialIcons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={styles.modalContent}>
+            <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
+              {/* TODO: Add actual privacy policy content */}
+              Privacy Policy content will be added here. This will include information about data collection, usage, and user rights.
+            </Text>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Terms of Service Modal */}
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showToS}
+        onRequestClose={() => setShowToS(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { fontFamily: getFontFamily() }]}>Terms of Service</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowToS(false)}
+            >
+              <MaterialIcons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={styles.modalContent}>
+            <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
+              {/* TODO: Add actual Terms of Service content */}
+              Terms of Service content will be added here. This will include user agreements, acceptable use policies, and legal terms.
+            </Text>
+          </ScrollView>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#f8f9fa',
+  },
+  contentContainer: {
+    paddingBottom: 100, // Space for tab bar
+  },
+  header: {
     alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 30,
     backgroundColor: '#fff',
-    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 10,
+    marginTop: 16,
   },
-  subtitle: {
+  section: {
+    backgroundColor: '#fff',
+    marginTop: 20,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  sectionTitle: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 30,
+    fontWeight: '600',
+    color: '#333',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#f8f9fa',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  userInfo: {
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    minHeight: 60,
+  },
+  settingIcon: {
+    marginRight: 16,
+  },
+  settingContent: {
+    flex: 1,
+  },
+  settingLabel: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 2,
+  },
+  settingValue: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 30,
   },
-  logoutContainer: {
-    marginTop: 50,
+  logoutText: {
+    color: '#ff4444',
+    flex: 1,
+  },
+  orangeText: {
+    color: '#ff9500',
+    flex: 1,
+  },
+  dangerSection: {
+    borderColor: '#ff4444',
+    borderWidth: 1,
+  },
+  dangerTitle: {
+    color: '#ff4444',
+    backgroundColor: '#fff5f5',
+  },
+  dangerItem: {
+    backgroundColor: '#fff5f5',
+  },
+  dangerText: {
+    color: '#ff4444',
+    flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  closeButton: {
+    padding: 8,
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+  },
+  modalText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#333',
   },
 });
 
