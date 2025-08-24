@@ -8,7 +8,8 @@ import {
   ScrollView,
   Modal,
   Linking,
-  Platform 
+  Platform,
+  Switch 
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -23,6 +24,14 @@ const SettingsScreen: React.FC = () => {
   const { user, signOut } = useAuth();
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showToS, setShowToS] = useState(false);
+  const [showPermissions, setShowPermissions] = useState(false);
+  
+  // Permission states
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
+  const [crashReportingEnabled, setCrashReportingEnabled] = useState(true);
+  const [hapticFeedbackEnabled, setHapticFeedbackEnabled] = useState(true);
+  const [dataSyncEnabled, setDataSyncEnabled] = useState(true);
 
   /**
    * Handles user logout with confirmation dialog.
@@ -134,8 +143,7 @@ const SettingsScreen: React.FC = () => {
    */
   const openPermissions = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // TODO: Implement permissions management
-    Alert.alert('Permissions', 'Permission management will be implemented soon.');
+    setShowPermissions(true);
   };
 
   return (
@@ -381,6 +389,130 @@ const SettingsScreen: React.FC = () => {
           </ScrollView>
         </View>
       </Modal>
+
+      {/* Permissions Modal */}
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={showPermissions}
+        onRequestClose={() => setShowPermissions(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { fontFamily: getFontFamily() }]}>Permissions</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowPermissions(false)}
+            >
+              <MaterialIcons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={styles.modalContent}>
+            <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
+              <Text style={styles.privacyTitle}>App Permissions{'\n\n'}</Text>
+              Manage what data and features the Aurebesh app can access. You can turn these permissions on or off at any time.{'\n\n'}
+            </Text>
+
+            {/* Notifications Permission */}
+            <View style={styles.permissionItem}>
+              <View style={styles.permissionContent}>
+                <MaterialIcons name="notifications" size={24} color="#4f81cb" style={styles.permissionIcon} />
+                <View style={styles.permissionText}>
+                  <Text style={[styles.permissionLabel, { fontFamily: getFontFamily() }]}>Push Notifications</Text>
+                  <Text style={[styles.permissionDescription, { fontFamily: getFontFamily() }]}>
+                    Receive notifications about learning reminders and app updates
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={notificationsEnabled}
+                onValueChange={setNotificationsEnabled}
+                trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
+                thumbColor={notificationsEnabled ? '#fff' : '#f4f3f4'}
+              />
+            </View>
+
+            {/* Analytics Permission */}
+            <View style={styles.permissionItem}>
+              <View style={styles.permissionContent}>
+                <MaterialIcons name="analytics" size={24} color="#4f81cb" style={styles.permissionIcon} />
+                <View style={styles.permissionText}>
+                  <Text style={[styles.permissionLabel, { fontFamily: getFontFamily() }]}>Usage Analytics</Text>
+                  <Text style={[styles.permissionDescription, { fontFamily: getFontFamily() }]}>
+                    Help improve the app by sharing anonymous usage data
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={analyticsEnabled}
+                onValueChange={setAnalyticsEnabled}
+                trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
+                thumbColor={analyticsEnabled ? '#fff' : '#f4f3f4'}
+              />
+            </View>
+
+            {/* Crash Reporting Permission */}
+            <View style={styles.permissionItem}>
+              <View style={styles.permissionContent}>
+                <MaterialIcons name="bug-report" size={24} color="#4f81cb" style={styles.permissionIcon} />
+                <View style={styles.permissionText}>
+                  <Text style={[styles.permissionLabel, { fontFamily: getFontFamily() }]}>Crash Reporting</Text>
+                  <Text style={[styles.permissionDescription, { fontFamily: getFontFamily() }]}>
+                    Automatically send crash reports to help fix bugs
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={crashReportingEnabled}
+                onValueChange={setCrashReportingEnabled}
+                trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
+                thumbColor={crashReportingEnabled ? '#fff' : '#f4f3f4'}
+              />
+            </View>
+
+            {/* Haptic Feedback Permission */}
+            <View style={styles.permissionItem}>
+              <View style={styles.permissionContent}>
+                <MaterialIcons name="vibration" size={24} color="#4f81cb" style={styles.permissionIcon} />
+                <View style={styles.permissionText}>
+                  <Text style={[styles.permissionLabel, { fontFamily: getFontFamily() }]}>Haptic Feedback</Text>
+                  <Text style={[styles.permissionDescription, { fontFamily: getFontFamily() }]}>
+                    Feel vibrations when interacting with buttons and UI elements
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={hapticFeedbackEnabled}
+                onValueChange={setHapticFeedbackEnabled}
+                trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
+                thumbColor={hapticFeedbackEnabled ? '#fff' : '#f4f3f4'}
+              />
+            </View>
+
+            {/* Data Sync Permission */}
+            <View style={styles.permissionItem}>
+              <View style={styles.permissionContent}>
+                <MaterialIcons name="sync" size={24} color="#4f81cb" style={styles.permissionIcon} />
+                <View style={styles.permissionText}>
+                  <Text style={[styles.permissionLabel, { fontFamily: getFontFamily() }]}>Data Sync</Text>
+                  <Text style={[styles.permissionDescription, { fontFamily: getFontFamily() }]}>
+                    Sync your learning progress across devices
+                  </Text>
+                </View>
+              </View>
+              <Switch
+                value={dataSyncEnabled}
+                onValueChange={setDataSyncEnabled}
+                trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
+                thumbColor={dataSyncEnabled ? '#fff' : '#f4f3f4'}
+              />
+            </View>
+
+            {/* Bottom spacing */}
+            <View style={styles.modalBottomSpace} />
+          </ScrollView>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -519,6 +651,40 @@ const styles = StyleSheet.create({
   },
   modalBottomSpace: {
     height: 50,
+  },
+  permissionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginBottom: 1,
+  },
+  permissionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  permissionIcon: {
+    marginRight: 16,
+  },
+  permissionText: {
+    flex: 1,
+  },
+  permissionLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 2,
+  },
+  permissionDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 18,
   },
 });
 
