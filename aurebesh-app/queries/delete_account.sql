@@ -1,6 +1,8 @@
 -- Simple function to allow users to delete their own account
 -- This will delete the user from auth.users and trigger cascading deletes
 
+-- RUN THIS COMMAND IN YOUR SUPABASE DATABASE
+
 CREATE OR REPLACE FUNCTION delete_user()
 RETURNS void
 LANGUAGE plpgsql
