@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -16,6 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
 import { getFontFamily } from '../utils/fonts';
 import { hapticMedium, hapticLight } from '../utils/haptics';
+import { calculateStorageUsage, formatBytes, StorageBreakdown, clearNetworkCache } from '../utils/storage';
 
 /**
  * SettingsScreen allows users to customize app preferences.
@@ -28,6 +29,24 @@ const SettingsScreen: React.FC = () => {
   const [showToS, setShowToS] = useState(false);
   const [showPermissions, setShowPermissions] = useState(false);
   const [showCacheDetails, setShowCacheDetails] = useState(false);
+  const [storageData, setStorageData] = useState<StorageBreakdown | null>(null);
+  const [loadingStorage, setLoadingStorage] = useState(false);
+
+  /**
+   * Calculate storage usage when component mounts
+   */
+  useEffect(() => {
+    const loadStorageData = async () => {
+      try {
+        const usage = await calculateStorageUsage();
+        setStorageData(usage);
+      } catch (error) {
+        console.error('Error calculating initial storage usage:', error);
+      }
+    };
+
+    loadStorageData();
+  }, []);
 
   /**
    * Handles user logout with confirmation dialog.
@@ -123,6 +142,14 @@ const SettingsScreen: React.FC = () => {
               // Clear all settings and reset to defaults
               await clearSettings();
               
+              // Also clear network cache
+              await clearNetworkCache();
+              
+              // Refresh storage data
+              setStorageData(null);
+              const newUsage = await calculateStorageUsage();
+              setStorageData(newUsage);
+              
               Alert.alert('Cache Cleared', 'App preferences have been reset to their default values.');
             } catch (error) {
               console.error('Error clearing cache:', error);
@@ -164,6 +191,19 @@ const SettingsScreen: React.FC = () => {
   const openCacheDetails = async () => {
     await hapticLight(settings.hapticFeedbackEnabled);
     setShowCacheDetails(true);
+    
+    // Refresh storage data when modal opens (in case it changed)
+    if (!loadingStorage) {
+      setLoadingStorage(true);
+      try {
+        const usage = await calculateStorageUsage();
+        setStorageData(usage);
+      } catch (error) {
+        console.error('Error refreshing storage usage:', error);
+      } finally {
+        setLoadingStorage(false);
+      }
+    }
   };
 
   return (
@@ -230,7 +270,9 @@ const SettingsScreen: React.FC = () => {
           <MaterialIcons name="storage" size={24} color="#4f81cb" style={styles.settingIcon} />
           <View style={styles.settingContent}>
             <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Cache Size</Text>
-            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>2.3 MB</Text>
+            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>
+              {storageData ? formatBytes(storageData.total) : 'Calculating...'}
+            </Text>
           </View>
           <MaterialIcons name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
@@ -555,56 +597,72 @@ const SettingsScreen: React.FC = () => {
           <ScrollView style={styles.modalContent}>
             <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
               <Text style={styles.privacyTitle}>Storage Breakdown{'\n\n'}</Text>
-              Here's how your app's storage is being used:{'\n\n'}
+              {loadingStorage ? 'Calculating storage usage...' : 'Here\'s how your app\'s storage is being used:'}{'\n\n'}
             </Text>
 
-            {/* App Data Cache */}
-            <View style={styles.cacheItem}>
-              <View style={styles.cacheItemHeader}>
-                <MaterialIcons name="data-usage" size={20} color="#4f81cb" style={styles.cacheIcon} />
-                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>App Data</Text>
+            {loadingStorage ? (
+              <View style={styles.cacheItem}>
+                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Loading storage data...</Text>
               </View>
-              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>847 KB</Text>
-              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
-                User settings, preferences, and app configuration
-              </Text>
-            </View>
+            ) : (
+              <>
+                {/* App Data Cache */}
+                <View style={styles.cacheItem}>
+                  <View style={styles.cacheItemHeader}>
+                    <MaterialIcons name="data-usage" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                    <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>App Data</Text>
+                  </View>
+                  <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>
+                    {storageData ? formatBytes(storageData.appData) : '0 B'}
+                  </Text>
+                  <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                    User settings, preferences, and app configuration
+                  </Text>
+                </View>
 
-            {/* User Progress Cache */}
-            <View style={styles.cacheItem}>
-              <View style={styles.cacheItemHeader}>
-                <MaterialIcons name="trending-up" size={20} color="#4f81cb" style={styles.cacheIcon} />
-                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Learning Progress</Text>
-              </View>
-              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>512 KB</Text>
-              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
-                Your learning achievements, completed lessons, and statistics
-              </Text>
-            </View>
+                {/* User Progress Cache */}
+                <View style={styles.cacheItem}>
+                  <View style={styles.cacheItemHeader}>
+                    <MaterialIcons name="trending-up" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                    <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Learning Progress</Text>
+                  </View>
+                  <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>
+                    {storageData ? formatBytes(storageData.learningProgress) : '0 B'}
+                  </Text>
+                  <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                    Your learning achievements, completed lessons, and statistics
+                  </Text>
+                </View>
 
-            {/* Fonts Cache */}
-            <View style={styles.cacheItem}>
-              <View style={styles.cacheItemHeader}>
-                <MaterialIcons name="text-fields" size={20} color="#4f81cb" style={styles.cacheIcon} />
-                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Fonts & Assets</Text>
-              </View>
-              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>623 KB</Text>
-              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
-                Custom Aurebesh fonts and UI assets
-              </Text>
-            </View>
+                {/* Fonts Cache */}
+                <View style={styles.cacheItem}>
+                  <View style={styles.cacheItemHeader}>
+                    <MaterialIcons name="text-fields" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                    <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Fonts & Assets</Text>
+                  </View>
+                  <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>
+                    {storageData ? formatBytes(storageData.fontsAssets) : '0 B'}
+                  </Text>
+                  <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                    Custom Aurebesh fonts and UI assets
+                  </Text>
+                </View>
 
-            {/* Images Cache */}
-            <View style={styles.cacheItem}>
-              <View style={styles.cacheItemHeader}>
-                <MaterialIcons name="image" size={20} color="#4f81cb" style={styles.cacheIcon} />
-                <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Images & Icons</Text>
-              </View>
-              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>298 KB</Text>
-              <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
-                App icons, learning materials, and cached images
-              </Text>
-            </View>
+                {/* Images Cache */}
+                <View style={styles.cacheItem}>
+                  <View style={styles.cacheItemHeader}>
+                    <MaterialIcons name="image" size={20} color="#4f81cb" style={styles.cacheIcon} />
+                    <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Images & Icons</Text>
+                  </View>
+                  <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>
+                    {storageData ? formatBytes(storageData.imagesIcons) : '0 B'}
+                  </Text>
+                  <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
+                    App icons, learning materials, and cached images
+                  </Text>
+                </View>
+              </>
+            )}
 
             {/* Network Cache */}
             <View style={styles.cacheItem}>
@@ -612,7 +670,9 @@ const SettingsScreen: React.FC = () => {
                 <MaterialIcons name="cloud-download" size={20} color="#4f81cb" style={styles.cacheIcon} />
                 <Text style={[styles.cacheLabel, { fontFamily: getFontFamily() }]}>Network Cache</Text>
               </View>
-              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>156 KB</Text>
+              <Text style={[styles.cacheSize, { fontFamily: getFontFamily() }]}>
+                {storageData ? formatBytes(storageData.networkCache) : '0 B'}
+              </Text>
               <Text style={[styles.cacheDescription, { fontFamily: getFontFamily() }]}>
                 API responses and temporary network data
               </Text>
@@ -624,7 +684,9 @@ const SettingsScreen: React.FC = () => {
                 <MaterialIcons name="storage" size={20} color="#4f81cb" style={styles.cacheIcon} />
                 <Text style={[styles.cacheLabel, styles.cacheTotalLabel, { fontFamily: getFontFamily() }]}>Total Cache Size</Text>
               </View>
-              <Text style={[styles.cacheSize, styles.cacheTotalSize, { fontFamily: getFontFamily() }]}>2.3 MB</Text>
+              <Text style={[styles.cacheSize, styles.cacheTotalSize, { fontFamily: getFontFamily() }]}>
+                {storageData ? formatBytes(storageData.total) : '0 B'}
+              </Text>
             </View>
 
             <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
