@@ -8,7 +8,6 @@ import {
   Alert, 
   TouchableOpacity, 
   Image,
-  KeyboardAvoidingView,
   Platform,
   Modal,
   ScrollView,
@@ -93,10 +92,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.contentContainer}>
         {/* Glow Image */}
@@ -273,7 +269,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </ScrollView>
         </View>
       </Modal>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

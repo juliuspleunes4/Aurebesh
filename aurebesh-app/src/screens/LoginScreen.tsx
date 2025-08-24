@@ -8,7 +8,6 @@ import {
   Alert, 
   TouchableOpacity, 
   Image, 
-  KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard
@@ -52,10 +51,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.contentContainer}>
         {/* Glow Image */}
@@ -135,7 +131,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
