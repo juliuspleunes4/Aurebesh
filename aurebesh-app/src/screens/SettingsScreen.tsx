@@ -23,7 +23,7 @@ import { hapticMedium, hapticLight } from '../utils/haptics';
  */
 const SettingsScreen: React.FC = () => {
   const { user, signOut } = useAuth();
-  const { settings, updateSetting } = useSettings();
+  const { settings, updateSetting, clearSettings, loadSettings } = useSettings();
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showToS, setShowToS] = useState(false);
   const [showPermissions, setShowPermissions] = useState(false);
@@ -91,13 +91,14 @@ const SettingsScreen: React.FC = () => {
 
   /**
    * Handles cache clearing with confirmation.
+   * Currently only clears user settings/preferences, resetting them to defaults.
    */
   const handleClearCache = async () => {
     await hapticMedium(settings.hapticFeedbackEnabled);
     
     Alert.alert(
       'Clear Cache',
-      'This will clear all cached data. Continue?',
+      'This will reset your app preferences (like permissions settings) to their defaults. Your learning progress will not be affected. Continue?',
       [
         {
           text: 'Cancel',
@@ -109,9 +110,17 @@ const SettingsScreen: React.FC = () => {
         {
           text: 'Clear',
           onPress: async () => {
-            await hapticLight(settings.hapticFeedbackEnabled);
-            // TODO: Implement cache clearing
-            Alert.alert('Cache Cleared', 'All cached data has been cleared.');
+            await hapticMedium(settings.hapticFeedbackEnabled);
+            
+            try {
+              // Clear all settings and reset to defaults
+              await clearSettings();
+              
+              Alert.alert('Cache Cleared', 'App preferences have been reset to their default values.');
+            } catch (error) {
+              console.error('Error clearing cache:', error);
+              Alert.alert('Error', 'Failed to clear cache. Please try again.');
+            }
           },
         },
       ]
