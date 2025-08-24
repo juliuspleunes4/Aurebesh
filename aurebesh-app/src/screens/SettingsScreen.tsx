@@ -322,9 +322,62 @@ const SettingsScreen: React.FC = () => {
           </View>
           <ScrollView style={styles.modalContent}>
             <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
-              {/* TODO: Add actual Terms of Service content */}
-              Terms of Service content will be added here. This will include user agreements, acceptable use policies, and legal terms.
+              <Text style={styles.privacyTitle}>Terms of Service for Aurebesh{'\n\n'}</Text>
+              
+              <Text style={styles.privacyTitle}>Acceptance of Terms{'\n'}</Text>
+              By downloading, installing, or using the Aurebesh app, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our app.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Description of Service{'\n'}</Text>
+              Aurebesh is an educational app designed to help users learn the Aurebesh writing system from the Star Wars universe. The app provides interactive lessons, practice exercises, and translation tools.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>User Accounts{'\n'}</Text>
+              • You must provide accurate and complete information when creating an account{'\n'}
+              • You are responsible for maintaining the security of your account credentials{'\n'}
+              • You must notify us immediately of any unauthorized use of your account{'\n'}
+              • One person or legal entity may not maintain multiple accounts{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Acceptable Use{'\n'}</Text>
+              You agree not to:{'\n\n'}
+              • Use the app for any illegal or unauthorized purpose{'\n'}
+              • Attempt to gain unauthorized access to our systems{'\n'}
+              • Interfere with or disrupt the app's functionality{'\n'}
+              • Share inappropriate, offensive, or harmful content{'\n'}
+              • Reverse engineer, decompile, or disassemble the app{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Intellectual Property{'\n'}</Text>
+              The Aurebesh app and its content are owned by us and are protected by copyright, trademark, and other intellectual property laws. The Aurebesh writing system itself is part of the Star Wars universe, owned by Lucasfilm Ltd.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>User Content{'\n'}</Text>
+              Any content you create or share through the app remains your property. However, you grant us a license to use, store, and process this content to provide our services.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Disclaimers{'\n'}</Text>
+              The app is provided "as is" without warranties of any kind. We do not guarantee that the app will be error-free, secure, or continuously available.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Limitation of Liability{'\n'}</Text>
+              To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Termination{'\n'}</Text>
+              We may terminate or suspend your account at any time for violation of these terms. You may delete your account at any time through the app settings.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Changes to Terms{'\n'}</Text>
+              We reserve the right to modify these terms at any time. We will notify users of significant changes through the app or email.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Contact Information{'\n'}</Text>
+              If you have questions about these Terms of Service, please contact us:{'\n\n'}
+              
+              <Text 
+                style={styles.websiteLink}
+                onPress={() => Linking.openURL('https://aurebesh.app')}
+              >
+                https://aurebesh.app
+              </Text>
+              {'\n\n'}
+              
+              <Text style={styles.lastUpdated}>Last updated: August 2025</Text>
             </Text>
+            
+            {/* Empty space for scroll room */}
+            <View style={styles.modalBottomSpace} />
           </ScrollView>
         </View>
       </Modal>
