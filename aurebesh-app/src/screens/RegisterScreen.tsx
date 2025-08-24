@@ -21,17 +21,34 @@ import { getFontFamily } from '../utils/fonts';
  */
 const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
 
   /**
+   * Validates that both email fields match before proceeding with registration.
+   * @returns true if emails match, false otherwise
+   */
+  const validateEmails = (): boolean => {
+    if (email !== confirmEmail) {
+      Alert.alert('Email Mismatch', 'Please make sure both email addresses match.');
+      return false;
+    }
+    return true;
+  };
+
+  /**
    * Handles user registration using Supabase authentication.
-   * Validates input and displays appropriate success/error messages.
+   * Validates email confirmation and displays appropriate success/error messages.
    */
   const handleRegister = async () => {
-    if (!email || !password) {
+    if (!email || !confirmEmail || !password) {
       Alert.alert('Missing Information', 'Please fill in all fields.');
+      return;
+    }
+
+    if (!validateEmails()) {
       return;
     }
 
@@ -102,9 +119,29 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             />
             <TextInput
               style={styles.inputWithIcon}
-              placeholder="Email"
+              placeholder="E-mail"
               value={email}
               onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!loading}
+              placeholderTextColor="#999"
+            />
+          </View>
+          
+          {/* Confirm Email Input with @ Icon */}
+          <View style={styles.inputWrapper}>
+            <MaterialIcons 
+              name="alternate-email" 
+              size={20} 
+              color="#4f81cb" 
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.inputWithIcon}
+              placeholder="Confirm e-mail"
+              value={confirmEmail}
+              onChangeText={setConfirmEmail}
               autoCapitalize="none"
               keyboardType="email-address"
               editable={!loading}
