@@ -95,7 +95,8 @@ const SettingsScreen: React.FC = () => {
    */
   const handleClearCache = async () => {
 
-    /** Right now, this only clears user settings/preferences, resetting them to defaults. 
+    /** 
+     * Right now, this only clears user settings/preferences, resetting them to defaults. 
      * There currently isn't any other data to be deleted. 
      * More functionality may be added in the future.
     */
