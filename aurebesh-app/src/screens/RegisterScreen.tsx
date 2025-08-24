@@ -12,7 +12,9 @@ import {
   Platform,
   Modal,
   ScrollView,
-  Linking 
+  Linking,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
@@ -95,7 +97,8 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       style={styles.container} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.contentContainer}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.contentContainer}>
         {/* Glow Image */}
         <View style={styles.imageContainer}>
           <Image 
@@ -204,7 +207,8 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </Text>
           </Text>
         </View>
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
 
       {/* Privacy Policy Modal */}
       <Modal

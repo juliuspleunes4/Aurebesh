@@ -9,7 +9,9 @@ import {
   TouchableOpacity, 
   Image, 
   KeyboardAvoidingView,
-  Platform 
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
@@ -54,7 +56,8 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       style={styles.container} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.contentContainer}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.contentContainer}>
         {/* Glow Image */}
         <View style={styles.imageContainer}>
           <Image 
@@ -130,7 +133,8 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         >
           <Text style={styles.registerLinkText}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
