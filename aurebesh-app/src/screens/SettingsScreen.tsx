@@ -23,7 +23,7 @@ import { calculateStorageUsage, formatBytes, StorageBreakdown, clearNetworkCache
  * Includes account management, privacy settings, app info, and logout functionality.
  */
 const SettingsScreen: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, deleteAccount } = useAuth();
   const { settings, updateSetting, clearSettings, loadSettings } = useSettings();
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showToS, setShowToS] = useState(false);
@@ -100,8 +100,30 @@ const SettingsScreen: React.FC = () => {
           style: 'destructive',
           onPress: async () => {
             await hapticMedium(settings.hapticFeedbackEnabled);
-            // TODO: Implement account deletion with Supabase
-            Alert.alert('Coming Soon', 'Account deletion functionality will be implemented soon.');
+            
+            try {
+              const { error } = await deleteAccount();
+              
+              if (error) {
+                console.error('Error deleting account:', error);
+                Alert.alert(
+                  'Error',
+                  'Failed to delete account. Please try again or contact support.',
+                  [{ text: 'OK' }]
+                );
+              } else {
+                // Success - user should be automatically logged out
+                // No need to show an alert since they'll be taken to login screen
+                console.log('Account successfully deleted and user logged out');
+              }
+            } catch (error) {
+              console.error('Error deleting account:', error);
+              Alert.alert(
+                'Error',
+                'Failed to delete account. Please try again or contact support.',
+                [{ text: 'OK' }]
+              );
+            }
           },
         },
       ]

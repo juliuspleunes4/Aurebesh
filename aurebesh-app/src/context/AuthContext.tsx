@@ -12,6 +12,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error?: any }>;
   signUp: (email: string, password: string) => Promise<{ error?: any; data?: any }>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<{ error?: any }>;
 }
 
 /**
@@ -99,6 +100,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
   };
 
+  /**
+   * Delete the current user's account permanently.
+   * This action cannot be undone and will remove all user data.
+   * @returns Promise with error if deletion fails
+   */
+  const deleteAccount = async () => {
+    try {
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        return { error: userError || new Error('No user found') };
+      }
+
+      // Delete the user using Supabase's built-in user deletion
+      // This will remove the user from auth.users and trigger any cascading deletions
+      const { error } = await supabase.rpc('delete_user');
+
+      if (error) {
+        return { error };
+      }
+
+      // Explicitly sign out to clear local session/tokens
+      await supabase.auth.signOut();
+      
+      return {};
+    } catch (error) {
+      return { error };
+    }
+  };
+
   const value = {
     session,
     user,
@@ -106,6 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signUp,
     signOut,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
