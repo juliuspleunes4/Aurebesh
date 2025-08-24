@@ -58,7 +58,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Glow Image */}
         <View style={styles.imageContainer}>
           <Image 
-            source={require('../../assets/glow_happy_blue.png')} 
+            source={require('../../assets/glow_login.png')} 
             style={styles.glowImage}
             resizeMode="contain"
           />
