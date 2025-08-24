@@ -1,2 +1,7 @@
-# Force all .sql files anywhere to be counted as SQL (Aesthetic choice for the repository)
+# Force all .sql files to be counted as SQL language
+*.sql linguist-language=SQL
 **/*.sql linguist-language=SQL
+
+# Ensure SQL files are detected and counted
+*.sql linguist-detectable=true
+**/*.sql linguist-detectable=true
