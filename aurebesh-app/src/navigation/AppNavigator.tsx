@@ -35,24 +35,16 @@ const LoadingScreen: React.FC = () => (
 const AuthStack: React.FC = () => (
   <Stack.Navigator
     screenOptions={{
-      headerStyle: {
-        backgroundColor: '#f8f9fa',
-      },
-      headerTintColor: '#333',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
+      headerShown: false, // Hide header for all auth screens
     }}
   >
     <Stack.Screen 
       name="Login" 
       component={LoginScreen}
-      options={{ title: 'Sign In' }}
     />
     <Stack.Screen 
       name="Register" 
       component={RegisterScreen}
-      options={{ title: 'Create Account' }}
     />
   </Stack.Navigator>
 );
