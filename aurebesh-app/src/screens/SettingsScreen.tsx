@@ -214,7 +214,7 @@ const SettingsScreen: React.FC = () => {
           <MaterialIcons name="storage" size={24} color="#4f81cb" style={styles.settingIcon} />
           <View style={styles.settingContent}>
             <Text style={[styles.settingLabel, { fontFamily: getFontFamily() }]}>Cache Size</Text>
-            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>~2.3 MB</Text>
+            <Text style={[styles.settingValue, { fontFamily: getFontFamily() }]}>2.3 MB</Text>
           </View>
           <MaterialIcons name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
@@ -608,7 +608,7 @@ const SettingsScreen: React.FC = () => {
                 <MaterialIcons name="storage" size={20} color="#4f81cb" style={styles.cacheIcon} />
                 <Text style={[styles.cacheLabel, styles.cacheTotalLabel, { fontFamily: getFontFamily() }]}>Total Cache Size</Text>
               </View>
-              <Text style={[styles.cacheSize, styles.cacheTotalSize, { fontFamily: getFontFamily() }]}>~2.3 MB</Text>
+              <Text style={[styles.cacheSize, styles.cacheTotalSize, { fontFamily: getFontFamily() }]}>2.3 MB</Text>
             </View>
 
             <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
