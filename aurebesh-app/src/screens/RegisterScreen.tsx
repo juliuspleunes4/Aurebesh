@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform 
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { getFontFamily } from '../utils/fonts';
 
@@ -91,26 +92,44 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         {/* Input Fields */}
         <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            editable={!loading}
-            placeholderTextColor="#999"
-          />
+          {/* Email Input with @ Icon */}
+          <View style={styles.inputWrapper}>
+            <MaterialIcons 
+              name="alternate-email" 
+              size={20} 
+              color="#4f81cb" 
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.inputWithIcon}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!loading}
+              placeholderTextColor="#999"
+            />
+          </View>
           
-          <TextInput
-            style={styles.input}
-            placeholder="Password (min 6 characters)"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            editable={!loading}
-            placeholderTextColor="#999"
-          />
+          {/* Password Input with Lock Icon */}
+          <View style={styles.inputWrapper}>
+            <MaterialIcons 
+              name="lock" 
+              size={20} 
+              color="#4f81cb" 
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.inputWithIcon}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              editable={!loading}
+              placeholderTextColor="#999"
+            />
+          </View>
         </View>
 
         {/* Register Button */}
@@ -174,6 +193,25 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     marginBottom: 30,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4f81cb',
+    borderRadius: 12,
+    backgroundColor: '#f8f9fa',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  inputIcon: {
+    marginRight: 8,
+  },
+  inputWithIcon: {
+    flex: 1,
+    padding: 16,
+    fontSize: 16,
+    fontFamily: getFontFamily(),
   },
   input: {
     borderWidth: 1,
