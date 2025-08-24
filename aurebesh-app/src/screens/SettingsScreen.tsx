@@ -259,9 +259,46 @@ const SettingsScreen: React.FC = () => {
           </View>
           <ScrollView style={styles.modalContent}>
             <Text style={[styles.modalText, { fontFamily: getFontFamily() }]}>
-              {/* TODO: Add actual privacy policy content */}
-              Privacy Policy content will be added here. This will include information about data collection, usage, and user rights.
+              <Text style={styles.privacyTitle}>Privacy Policy for Aurebesh{'\n\n'}</Text>
+              
+              <Text style={styles.privacyTitle}>Information We Collect{'\n'}</Text>
+              We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support. This may include:{'\n\n'}
+              • Email address for account creation and authentication{'\n'}
+              • Learning progress and preferences{'\n'}
+              • Usage data to improve our services{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>How We Use Your Information{'\n'}</Text>
+              We use the information we collect to:{'\n\n'}
+              • Provide, maintain, and improve our services{'\n'}
+              • Process authentication and account management{'\n'}
+              • Send you technical notices and support messages{'\n'}
+              • Understand how you use our services to make improvements{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Data Security{'\n'}</Text>
+              We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Data Retention{'\n'}</Text>
+              We retain your information for as long as your account is active or as needed to provide you services. You may request deletion of your account and associated data at any time.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Third-Party Services{'\n'}</Text>
+              Our app uses Supabase for authentication and data storage. Please review their privacy policy to understand how they handle your data.{'\n\n'}
+              
+              <Text style={styles.privacyTitle}>Contact Us{'\n'}</Text>
+              If you have any questions about this Privacy Policy, please contact us through our app or visit our website for more information:{'\n\n'}
+              
+              <Text 
+                style={styles.websiteLink}
+                onPress={() => Linking.openURL('https://aurebesh.app')}
+              >
+                https://aurebesh.app
+              </Text>
+              {'\n\n'}
+              
+              <Text style={styles.lastUpdated}>Last updated: August 2025</Text>
             </Text>
+            
+            {/* Empty space for scroll room */}
+            <View style={styles.modalBottomSpace} />
           </ScrollView>
         </View>
       </Modal>
@@ -305,7 +342,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: 75,
     paddingBottom: 30,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
@@ -412,6 +449,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#333',
+  },
+  privacyTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
+  },
+  websiteLink: {
+    color: '#4f81cb',
+    textDecorationLine: 'underline',
+  },
+  lastUpdated: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  modalBottomSpace: {
+    height: 50,
   },
 });
 
