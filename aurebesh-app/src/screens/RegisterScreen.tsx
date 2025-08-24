@@ -12,6 +12,7 @@ import {
   Platform 
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import { getFontFamily } from '../utils/fonts';
 
 /**
  * RegisterScreen allows users to create an account using Supabase authentication.
@@ -161,14 +162,14 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: 16,
     textAlign: 'center',
-    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif-medium',
+    fontFamily: getFontFamily(),
   },
   welcomeText: {
     fontSize: 18,
     color: '#666',
     marginBottom: 40,
     textAlign: 'center',
-    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif',
+    fontFamily: getFontFamily(),
   },
   inputContainer: {
     width: '100%',
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
     backgroundColor: '#f8f9fa',
-    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif',
+    fontFamily: getFontFamily(),
   },
   registerButton: {
     backgroundColor: '#4f81cb',
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif-medium',
+    fontFamily: getFontFamily(),
   },
   loginLinkContainer: {
     alignItems: 'center',
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   loginLinkText: {
     fontSize: 16,
     color: '#999',
-    fontFamily: Platform.OS === 'ios' ? 'SF Pro Rounded' : 'sans-serif',
+    fontFamily: getFontFamily(),
   },
 });
 
