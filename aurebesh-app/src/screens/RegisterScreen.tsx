@@ -9,7 +9,10 @@ import {
   TouchableOpacity, 
   Image,
   KeyboardAvoidingView,
-  Platform 
+  Platform,
+  Modal,
+  ScrollView,
+  Linking 
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
@@ -24,6 +27,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const { signUp } = useAuth();
 
   /**
@@ -187,7 +191,84 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         >
           <Text style={styles.loginLinkText}>I already have an account</Text>
         </TouchableOpacity>
+
+        {/* Privacy Policy Link */}
+        <View style={styles.privacyContainer}>
+          <Text style={styles.privacyText}>
+            By registering, you agree to our{' '}
+            <Text 
+              style={styles.privacyLink}
+              onPress={() => setShowPrivacyPolicy(true)}
+            >
+              Privacy Policy
+            </Text>
+          </Text>
+        </View>
       </View>
+
+      {/* Privacy Policy Modal */}
+      <Modal
+        visible={showPrivacyPolicy}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowPrivacyPolicy(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Privacy Policy</Text>
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => setShowPrivacyPolicy(false)}
+            >
+              <MaterialIcons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+          </View>
+          
+          <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+            <Text style={styles.privacyPolicyText}>
+              <Text style={styles.sectionTitle}>Privacy Policy for Aurebesh{'\n\n'}</Text>
+              
+              <Text style={styles.sectionTitle}>Information We Collect{'\n'}</Text>
+              We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support. This may include:{'\n\n'}
+              • Email address for account creation and authentication{'\n'}
+              • Learning progress and preferences{'\n'}
+              • Usage data to improve our services{'\n\n'}
+              
+              <Text style={styles.sectionTitle}>How We Use Your Information{'\n'}</Text>
+              We use the information we collect to:{'\n\n'}
+              • Provide, maintain, and improve our services{'\n'}
+              • Process authentication and account management{'\n'}
+              • Send you technical notices and support messages{'\n'}
+              • Understand how you use our services to make improvements{'\n\n'}
+              
+              <Text style={styles.sectionTitle}>Data Security{'\n'}</Text>
+              We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.{'\n\n'}
+              
+              <Text style={styles.sectionTitle}>Data Retention{'\n'}</Text>
+              We retain your information for as long as your account is active or as needed to provide you services. You may request deletion of your account and associated data at any time.{'\n\n'}
+              
+              <Text style={styles.sectionTitle}>Third-Party Services{'\n'}</Text>
+              Our app uses Supabase for authentication and data storage. Please review their privacy policy to understand how they handle your data.{'\n\n'}
+              
+              <Text style={styles.sectionTitle}>Contact Us{'\n'}</Text>
+              If you have any questions about this Privacy Policy, please contact us through our app or visit our website for more information:{'\n\n'}
+              
+              <Text 
+                style={styles.websiteLink}
+                onPress={() => Linking.openURL('https://aurebesh.app')}
+              >
+                https://aurebesh.app
+              </Text>
+              {'\n\n'}
+              
+              <Text style={styles.lastUpdated}>Last updated: August 2025</Text>
+            </Text>
+            
+            {/* Empty space for scroll room */}
+            <View style={styles.modalBottomSpace} />
+          </ScrollView>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 };
@@ -295,6 +376,74 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#999',
     fontFamily: getFontFamily(),
+  },
+  privacyContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 24,
+    right: 24,
+    alignItems: 'center',
+  },
+  privacyText: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'center',
+    fontFamily: getFontFamily(),
+  },
+  privacyLink: {
+    color: '#4f81cb',
+    textDecorationLine: 'underline',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    backgroundColor: '#f8f9fa',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    fontFamily: getFontFamily(),
+  },
+  closeButton: {
+    padding: 4,
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  privacyPolicyText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#333',
+    fontFamily: getFontFamily(),
+  },
+  sectionTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
+  },
+  websiteLink: {
+    color: '#4f81cb',
+    textDecorationLine: 'underline',
+  },
+  lastUpdated: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  modalBottomSpace: {
+    height: 50,
   },
 });
 
