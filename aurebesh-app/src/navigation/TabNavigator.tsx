@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { Platform } from 'react-native';
 import { LearnScreen, WriteScreen, ReadScreen, SettingsScreen } from '../screens';
 
 /**
@@ -27,23 +28,35 @@ const TabNavigator: React.FC = () => {
       screenOptions={{
         tabBarActiveTintColor: '#4f81cb',
         tabBarInactiveTintColor: '#666',
-        tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopWidth: 1,
-          borderTopColor: '#e0e0e0',
-          paddingBottom: 15,
-          paddingTop: 5,
-          height: 80,
-        },
+        headerShown: false,
+        tabBarStyle: Platform.select({
+          ios: {
+            position: 'absolute',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderTopWidth: 0,
+            paddingBottom: 34,
+            paddingTop: 8,
+            height: 90,
+          },
+          default: {
+            backgroundColor: '#fff',
+            borderTopWidth: 1,
+            borderTopColor: '#e0e0e0',
+            paddingBottom: 15,
+            paddingTop: 5,
+            height: 80,
+            elevation: 8,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: -2,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+          },
+        }),
         tabBarIconStyle: {
-          marginTop: 5,
-        },
-        headerStyle: {
-          backgroundColor: '#4f81cb',
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-          fontWeight: 'bold',
+          marginTop: 2,
         },
       }}
       screenListeners={{
