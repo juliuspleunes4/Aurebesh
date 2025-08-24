@@ -12,9 +12,10 @@ import {
   Switch 
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import { getFontFamily } from '../utils/fonts';
+import { hapticMedium, hapticLight } from '../utils/haptics';
 
 /**
  * SettingsScreen allows users to customize app preferences.
@@ -22,23 +23,17 @@ import { getFontFamily } from '../utils/fonts';
  */
 const SettingsScreen: React.FC = () => {
   const { user, signOut } = useAuth();
+  const { settings, updateSetting } = useSettings();
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showToS, setShowToS] = useState(false);
   const [showPermissions, setShowPermissions] = useState(false);
-  
-  // Permission states
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
-  const [crashReportingEnabled, setCrashReportingEnabled] = useState(true);
-  const [hapticFeedbackEnabled, setHapticFeedbackEnabled] = useState(true);
-  const [dataSyncEnabled, setDataSyncEnabled] = useState(true);
 
   /**
    * Handles user logout with confirmation dialog.
    * Clears the session and returns user to login screen.
    */
   const handleLogout = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await hapticMedium(settings.hapticFeedbackEnabled);
     
     Alert.alert(
       'Logout',
@@ -48,14 +43,14 @@ const SettingsScreen: React.FC = () => {
           text: 'Cancel',
           style: 'cancel',
           onPress: async () => {
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            await hapticLight(settings.hapticFeedbackEnabled);
           },
         },
         {
           text: 'Logout',
           style: 'destructive',
           onPress: async () => {
-            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            await hapticMedium(settings.hapticFeedbackEnabled);
             signOut();
           },
         },
@@ -67,7 +62,7 @@ const SettingsScreen: React.FC = () => {
    * Handles account deletion with confirmation dialog.
    */
   const handleDeleteAccount = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    await hapticMedium(settings.hapticFeedbackEnabled);
     
     Alert.alert(
       'Delete Account',
@@ -77,14 +72,14 @@ const SettingsScreen: React.FC = () => {
           text: 'Cancel',
           style: 'cancel',
           onPress: async () => {
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            await hapticLight(settings.hapticFeedbackEnabled);
           },
         },
         {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            await hapticMedium(settings.hapticFeedbackEnabled);
             // TODO: Implement account deletion with Supabase
             Alert.alert('Coming Soon', 'Account deletion functionality will be implemented soon.');
           },
@@ -97,7 +92,7 @@ const SettingsScreen: React.FC = () => {
    * Handles cache clearing with confirmation.
    */
   const handleClearCache = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await hapticMedium(settings.hapticFeedbackEnabled);
     
     Alert.alert(
       'Clear Cache',
@@ -107,13 +102,13 @@ const SettingsScreen: React.FC = () => {
           text: 'Cancel',
           style: 'cancel',
           onPress: async () => {
-            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            await hapticLight(settings.hapticFeedbackEnabled);
           },
         },
         {
           text: 'Clear',
           onPress: async () => {
-            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            await hapticLight(settings.hapticFeedbackEnabled);
             // TODO: Implement cache clearing
             Alert.alert('Cache Cleared', 'All cached data has been cleared.');
           },
@@ -126,7 +121,7 @@ const SettingsScreen: React.FC = () => {
    * Opens privacy policy modal.
    */
   const openPrivacyPolicy = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await hapticLight(settings.hapticFeedbackEnabled);
     setShowPrivacyPolicy(true);
   };
 
@@ -134,7 +129,7 @@ const SettingsScreen: React.FC = () => {
    * Opens Terms of Service modal.
    */
   const openToS = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await hapticLight(settings.hapticFeedbackEnabled);
     setShowToS(true);
   };
 
@@ -142,7 +137,7 @@ const SettingsScreen: React.FC = () => {
    * Opens app permissions settings.
    */
   const openPermissions = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await hapticLight(settings.hapticFeedbackEnabled);
     setShowPermissions(true);
   };
 
@@ -425,10 +420,10 @@ const SettingsScreen: React.FC = () => {
                 </View>
               </View>
               <Switch
-                value={notificationsEnabled}
-                onValueChange={setNotificationsEnabled}
+                value={settings.notificationsEnabled}
+                onValueChange={(value) => updateSetting('notificationsEnabled', value)}
                 trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
-                thumbColor={notificationsEnabled ? '#fff' : '#f4f3f4'}
+                thumbColor={settings.notificationsEnabled ? '#fff' : '#f4f3f4'}
               />
             </View>
 
@@ -444,10 +439,10 @@ const SettingsScreen: React.FC = () => {
                 </View>
               </View>
               <Switch
-                value={analyticsEnabled}
-                onValueChange={setAnalyticsEnabled}
+                value={settings.analyticsEnabled}
+                onValueChange={(value) => updateSetting('analyticsEnabled', value)}
                 trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
-                thumbColor={analyticsEnabled ? '#fff' : '#f4f3f4'}
+                thumbColor={settings.analyticsEnabled ? '#fff' : '#f4f3f4'}
               />
             </View>
 
@@ -463,10 +458,10 @@ const SettingsScreen: React.FC = () => {
                 </View>
               </View>
               <Switch
-                value={crashReportingEnabled}
-                onValueChange={setCrashReportingEnabled}
+                value={settings.crashReportingEnabled}
+                onValueChange={(value) => updateSetting('crashReportingEnabled', value)}
                 trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
-                thumbColor={crashReportingEnabled ? '#fff' : '#f4f3f4'}
+                thumbColor={settings.crashReportingEnabled ? '#fff' : '#f4f3f4'}
               />
             </View>
 
@@ -482,10 +477,10 @@ const SettingsScreen: React.FC = () => {
                 </View>
               </View>
               <Switch
-                value={hapticFeedbackEnabled}
-                onValueChange={setHapticFeedbackEnabled}
+                value={settings.hapticFeedbackEnabled}
+                onValueChange={(value) => updateSetting('hapticFeedbackEnabled', value)}
                 trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
-                thumbColor={hapticFeedbackEnabled ? '#fff' : '#f4f3f4'}
+                thumbColor={settings.hapticFeedbackEnabled ? '#fff' : '#f4f3f4'}
               />
             </View>
 
@@ -501,10 +496,10 @@ const SettingsScreen: React.FC = () => {
                 </View>
               </View>
               <Switch
-                value={dataSyncEnabled}
-                onValueChange={setDataSyncEnabled}
+                value={settings.dataSyncEnabled}
+                onValueChange={(value) => updateSetting('dataSyncEnabled', value)}
                 trackColor={{ false: '#e0e0e0', true: '#4f81cb' }}
-                thumbColor={dataSyncEnabled ? '#fff' : '#f4f3f4'}
+                thumbColor={settings.dataSyncEnabled ? '#fff' : '#f4f3f4'}
               />
             </View>
 

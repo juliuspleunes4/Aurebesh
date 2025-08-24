@@ -1,9 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 import { LearnScreen, WriteScreen, ReadScreen, SettingsScreen } from '../screens';
+import { useSettings } from '../context/SettingsContext';
+import { hapticLight } from '../utils/haptics';
 
 /**
  * Type definition for the tab navigator parameters.
@@ -23,6 +24,8 @@ const Tab = createBottomTabNavigator<TabParamList>();
  * Features bottom tabs for Learn, Write, Read, and Settings screens.
  */
 const TabNavigator: React.FC = () => {
+  const { settings } = useSettings();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -61,8 +64,8 @@ const TabNavigator: React.FC = () => {
       }}
       screenListeners={{
         tabPress: () => {
-          // Haptic feedback on tab press
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          // Haptic feedback on tab press (conditional)
+          hapticLight(settings.hapticFeedbackEnabled);
         },
       }}
     >
