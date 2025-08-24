@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 import { LearnScreen, WriteScreen, ReadScreen, SettingsScreen } from '../screens';
 import { useSettings } from '../context/SettingsContext';
 import { hapticLight } from '../utils/haptics';
+import { getFontFamily } from '../utils/fonts';
 
 /**
  * Type definition for the tab navigator parameters.
@@ -32,6 +33,11 @@ const TabNavigator: React.FC = () => {
         tabBarActiveTintColor: '#4f81cb',
         tabBarInactiveTintColor: '#666',
         headerShown: false,
+        tabBarLabelStyle: {
+          fontFamily: getFontFamily(),
+          fontSize: 12,
+          fontWeight: '500',
+        },
         tabBarStyle: Platform.select({
           ios: {
             position: 'absolute',
