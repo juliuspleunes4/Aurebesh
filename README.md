@@ -39,6 +39,9 @@ aurebesh/
 │   │   ├── splash-icon.png       # Splash screen image
 │   │   ├── glow_login.png        # Login screen graphics
 │   │   └── glow_register.png     # Registration screen graphics
+│   ├── 🗃️ queries/               # Database setup queries
+│   │   ├── delete_account.sql    # User account deletion function
+│   │   └── README.md             # Database setup instructions
 │   └── 🗂️ src/                   # Source code directory
 │       ├── 🧩 components/        # Reusable UI components
 │       │   ├── AnimatedAuthNavigator.tsx  # Custom auth navigation
@@ -101,12 +104,20 @@ aurebesh/
    const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
    ```
 
-5. **Start the development server**:
+5. **Setup database functions** (Required for app features):
+   ```bash
+   # Execute the SQL queries in your Supabase database
+   # See aurebesh-app/queries/README.md for detailed instructions
+   ```
+   
+   The queries in `aurebesh-app/queries/` must be run in your Supabase SQL Editor to enable features like account deletion. Check the [queries README](aurebesh-app/queries/README.md) for step-by-step instructions.
+
+6. **Start the development server**:
    ```bash
    npm start
    ```
 
-6. **Run on your preferred platform**:
+7. **Run on your preferred platform**:
    ```bash
    # iOS Simulator (macOS only)
    npm run ios
