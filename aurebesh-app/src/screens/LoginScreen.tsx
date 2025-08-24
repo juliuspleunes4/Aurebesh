@@ -82,7 +82,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             />
             <TextInput
               style={styles.inputWithIcon}
-              placeholder="Email"
+              placeholder="E-mail"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
