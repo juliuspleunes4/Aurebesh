@@ -3,7 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { LoginScreen, RegisterScreen, HomeScreen } from '../screens';
+import { HomeScreen } from '../screens';
+import { AnimatedAuthNavigator } from '../components';
 
 /**
  * Type definition for the navigation stack parameters.
@@ -26,27 +27,6 @@ const LoadingScreen: React.FC = () => (
     <ActivityIndicator size="large" color="#007AFF" />
     <Text style={styles.loadingText}>Loading...</Text>
   </View>
-);
-
-/**
- * AuthStack contains the authentication-related screens (Login, Register).
- * Used when the user is not authenticated.
- */
-const AuthStack: React.FC = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false, // Hide header for all auth screens
-    }}
-  >
-    <Stack.Screen 
-      name="Login" 
-      component={LoginScreen}
-    />
-    <Stack.Screen 
-      name="Register" 
-      component={RegisterScreen}
-    />
-  </Stack.Navigator>
 );
 
 /**
@@ -88,7 +68,7 @@ const AppNavigator: React.FC = () => {
 
   return (
     <NavigationContainer>
-      {session ? <MainStack /> : <AuthStack />}
+      {session ? <MainStack /> : <AnimatedAuthNavigator />}
     </NavigationContainer>
   );
 };

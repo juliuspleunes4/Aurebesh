@@ -7,7 +7,7 @@ import {
   StyleSheet, 
   Alert, 
   TouchableOpacity, 
-  Image, 
+  Image,
   KeyboardAvoidingView,
   Platform 
 } from 'react-native';
@@ -95,7 +95,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Glow Image */}
         <View style={styles.imageContainer}>
           <Image 
-            source={require('../../assets/glow_happy_blue.png')} 
+            source={require('../../assets/glow_happy_blue.png')}
             style={styles.glowImage}
             resizeMode="contain"
           />
