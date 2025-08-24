@@ -1,22 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { HomeScreen } from '../screens';
+import TabNavigator from './TabNavigator';
 import { AnimatedAuthNavigator } from '../components';
-
-/**
- * Type definition for the navigation stack parameters.
- * Defines the screens and their expected parameters for type safety.
- */
-export type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  Home: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
 
 /**
  * Loading screen component displayed while checking authentication status.
@@ -27,30 +14,6 @@ const LoadingScreen: React.FC = () => (
     <ActivityIndicator size="large" color="#007AFF" />
     <Text style={styles.loadingText}>Loading...</Text>
   </View>
-);
-
-/**
- * MainStack contains the main app screens for authenticated users.
- * Used when the user is successfully logged in.
- */
-const MainStack: React.FC = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: '#f8f9fa',
-      },
-      headerTintColor: '#333',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-    }}
-  >
-    <Stack.Screen 
-      name="Home" 
-      component={HomeScreen}
-      options={{ title: 'Aurebesh' }}
-    />
-  </Stack.Navigator>
 );
 
 /**
@@ -68,7 +31,7 @@ const AppNavigator: React.FC = () => {
 
   return (
     <NavigationContainer>
-      {session ? <MainStack /> : <AnimatedAuthNavigator />}
+      {session ? <TabNavigator /> : <AnimatedAuthNavigator />}
     </NavigationContainer>
   );
 };
