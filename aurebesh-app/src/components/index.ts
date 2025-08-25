@@ -4,3 +4,4 @@
  */
 
 export { AnimatedAuthNavigator } from './AnimatedAuthNavigator';
+export { AurebeshKeyboard } from './AurebeshKeyboard';
