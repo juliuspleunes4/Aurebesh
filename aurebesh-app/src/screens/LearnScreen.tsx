@@ -308,7 +308,7 @@ const LearnScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <MaterialIcons name="school" size={48} color="#4f81cb" />
-        <Text style={[styles.title, { fontFamily: getFontFamily() }]}>Learn Aurebesh</Text>
+        <Text style={[styles.title, { fontFamily: getFontFamily() }]}>Read Aurebesh</Text>
         <Text style={[styles.subtitle, { fontFamily: getFontFamily() }]}>
           Translate Aurebesh characters to English
         </Text>

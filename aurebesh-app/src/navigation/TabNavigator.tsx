@@ -79,9 +79,9 @@ const TabNavigator: React.FC = () => {
         name="Learn"
         component={LearnScreen}
         options={{
-          title: 'Learn',
+          title: 'Read',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="school" size={28} color={color} />
+            <MaterialIcons name="chrome-reader-mode" size={28} color={color} />
           ),
         }}
       />
@@ -99,9 +99,9 @@ const TabNavigator: React.FC = () => {
         name="Read"
         component={ReadScreen}
         options={{
-          title: 'Read',
+          title: 'Learn',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="chrome-reader-mode" size={28} color={color} />
+            <MaterialIcons name="school" size={28} color={color} />
           ),
         }}
       />

@@ -185,7 +185,7 @@ const ReadScreen: React.FC = () => {
             <View style={styles.header}>
               <MaterialIcons name="chrome-reader-mode" size={48} color="#4f81cb" />
               <Text style={[styles.title, { fontFamily: getFontFamily() }]}>
-                Aurebesh Alphabet
+                Learn Aurebesh
               </Text>
               <Text style={[styles.subtitle, { fontFamily: getFontFamily() }]}>
                 Learn the complete Aurebesh writing system used in the Star Wars galaxy
