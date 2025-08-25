@@ -59,9 +59,19 @@ const aurebeshAlphabet: AurebeshCharacter[] = [
  * Users can view all Aurebesh characters with their English equivalents and canonical names.
  * Includes interactive elements and follows the app's design system.
  */
-const LearnScreen: React.FC = () => {
+interface LearnScreenProps {
+  navigation: {
+    navigate: (screen: string) => void;
+  };
+}
+
+const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
   const { settings } = useSettings();
   const [selectedCharacter, setSelectedCharacter] = useState<AurebeshCharacter | null>(null);
+  const [currentFlashcard, setCurrentFlashcard] = useState<AurebeshCharacter | null>(null);
+  const [flashcardIndex, setFlashcardIndex] = useState(0);
+  const [showFlashcardAnswer, setShowFlashcardAnswer] = useState(false);
+  const [isFlashcardMode, setIsFlashcardMode] = useState(false);
   const screenWidth = Dimensions.get('window').width;
   
   /**
@@ -89,6 +99,57 @@ const LearnScreen: React.FC = () => {
   const clearSelection = async () => {
     await hapticLight(settings.hapticFeedbackEnabled);
     setSelectedCharacter(null);
+  };
+
+  /**
+   * Starts flashcard mode with the first character
+   */
+  const startFlashcards = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    setIsFlashcardMode(true);
+    setFlashcardIndex(0);
+    setCurrentFlashcard(aurebeshAlphabet[0]);
+    setShowFlashcardAnswer(false);
+  };
+
+  /**
+   * Exits flashcard mode
+   */
+  const exitFlashcards = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    setIsFlashcardMode(false);
+    setCurrentFlashcard(null);
+    setShowFlashcardAnswer(false);
+  };
+
+  /**
+   * Shows the answer for the current flashcard
+   */
+  const revealFlashcardAnswer = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    setShowFlashcardAnswer(true);
+  };
+
+  /**
+   * Moves to the next flashcard
+   */
+  const nextFlashcard = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    const nextIndex = (flashcardIndex + 1) % aurebeshAlphabet.length;
+    setFlashcardIndex(nextIndex);
+    setCurrentFlashcard(aurebeshAlphabet[nextIndex]);
+    setShowFlashcardAnswer(false);
+  };
+
+  /**
+   * Moves to the previous flashcard
+   */
+  const previousFlashcard = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    const prevIndex = flashcardIndex === 0 ? aurebeshAlphabet.length - 1 : flashcardIndex - 1;
+    setFlashcardIndex(prevIndex);
+    setCurrentFlashcard(aurebeshAlphabet[prevIndex]);
+    setShowFlashcardAnswer(false);
   };
 
   /**
@@ -179,7 +240,69 @@ const LearnScreen: React.FC = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {selectedCharacter ? renderCharacterDetail() : (
+        {isFlashcardMode ? (
+          // Flashcard Mode
+          <View style={styles.flashcardContainer}>
+            <View style={styles.flashcardHeader}>
+              <TouchableOpacity 
+                style={styles.exitButton}
+                onPress={exitFlashcards}
+                accessibilityRole="button"
+                accessibilityLabel="Exit flashcards"
+              >
+                <MaterialIcons name="close" size={24} color="#ffffff" />
+              </TouchableOpacity>
+              <Text style={[styles.flashcardCounter, { fontFamily: getFontFamily() }]}>
+                {flashcardIndex + 1} / {aurebeshAlphabet.length}
+              </Text>
+            </View>
+
+            {currentFlashcard && (
+              <View style={styles.flashcard}>
+                <Text style={[styles.flashcardCharacter, { fontFamily: getAurebeshFontFamily() }]}>
+                  {currentFlashcard.aurebesh}
+                </Text>
+                
+                {showFlashcardAnswer ? (
+                  <Text style={[styles.flashcardAnswer, { fontFamily: getFontFamily() }]}>
+                    {currentFlashcard.english}
+                  </Text>
+                ) : (
+                  <TouchableOpacity 
+                    style={styles.revealButton}
+                    onPress={revealFlashcardAnswer}
+                    accessibilityRole="button"
+                    accessibilityLabel="Reveal answer"
+                  >
+                    <Text style={[styles.revealButtonText, { fontFamily: getFontFamily() }]}>
+                      Tap to reveal
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+
+            <View style={styles.flashcardControls}>
+              <TouchableOpacity 
+                style={styles.flashcardNavButton}
+                onPress={previousFlashcard}
+                accessibilityRole="button"
+                accessibilityLabel="Previous flashcard"
+              >
+                <MaterialIcons name="chevron-left" size={32} color="#ffffff" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.flashcardNavButton}
+                onPress={nextFlashcard}
+                accessibilityRole="button"
+                accessibilityLabel="Next flashcard"
+              >
+                <MaterialIcons name="chevron-right" size={32} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : selectedCharacter ? renderCharacterDetail() : (
           <>
             {/* Header Section */}
             <View style={styles.header}>
@@ -188,31 +311,64 @@ const LearnScreen: React.FC = () => {
                 Learn Aurebesh
               </Text>
               <Text style={[styles.subtitle, { fontFamily: getFontFamily() }]}>
-                Learn the complete Aurebesh writing system used in the Star Wars galaxy
+                Master the ancient writing system of the galaxy far, far away
               </Text>
             </View>
 
-            {/* Instructions */}
-            <View style={styles.instructionsContainer}>
-              <MaterialIcons name="info-outline" size={20} color="#666" />
-              <Text style={[styles.instructions, { fontFamily: getFontFamily() }]}>
-                Tap any character to see details about its name and pronunciation
-              </Text>
-            </View>
+            {/* Alphabet Reference Button */}
+            <TouchableOpacity 
+              style={styles.settingItem}
+              onPress={async () => {
+                await hapticLight(settings.hapticFeedbackEnabled);
+                navigation.navigate('Alphabet');
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="View Aurebesh alphabet reference"
+            >
+              <MaterialIcons name="language" size={24} color="#ffd700" style={styles.settingIcon} />
+              <View style={styles.settingText}>
+                <Text style={[styles.settingTitle, { fontFamily: getFontFamily() }]}>
+                  Aurebesh Alphabet
+                </Text>
+                <Text style={[styles.settingDescription, { fontFamily: getFontFamily() }]}>
+                  View complete alphabet reference
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={24} color="#666" />
+            </TouchableOpacity>
 
-            {/* Alphabet Grid */}
-            <View style={styles.alphabetGrid}>
-              {aurebeshAlphabet.map((character, index) => 
-                renderCharacterCard(character, index)
-              )}
-            </View>
-
-            {/* Footer Information */}
-            <View style={styles.footer}>
-              <Text style={[styles.footerText, { fontFamily: getFontFamily() }]}>
-                The Aurebesh alphabet is the writing system used throughout the Star Wars galaxy. 
-                Each character corresponds to a letter in the English alphabet and has its own unique name.
+            {/* Flashcard Practice Section */}
+            <View style={styles.flashcardSection}>
+              <View style={styles.sectionHeader}>
+                <MaterialIcons name="quiz" size={24} color="#4f81cb" />
+                <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>
+                  Flashcard Practice
+                </Text>
+              </View>
+              
+              <Text style={[styles.sectionDescription, { fontFamily: getFontFamily() }]}>
+                Practice recognizing Aurebesh characters with interactive flashcards
               </Text>
+
+              <TouchableOpacity 
+                style={styles.startButton}
+                onPress={startFlashcards}
+                accessibilityRole="button"
+                accessibilityLabel="Start flashcard practice"
+              >
+                <MaterialIcons name="play-arrow" size={24} color="#ffffff" />
+                <Text style={[styles.startButtonText, { fontFamily: getFontFamily() }]}>
+                  Start Practice
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.practiceInfo}>
+                <Text style={[styles.practiceInfoText, { fontFamily: getFontFamily() }]}>
+                  • {aurebeshAlphabet.length} characters to learn{'\n'}
+                  • Tap to reveal answers{'\n'}
+                  • Navigate with arrow buttons
+                </Text>
+              </View>
             </View>
           </>
         )}
@@ -383,6 +539,171 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginTop: 10,
     paddingHorizontal: 10,
+  },
+  // Settings-style button styles
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e1e5e9',
+  },
+  settingIcon: {
+    marginRight: 16,
+  },
+  settingText: {
+    flex: 1,
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+  },
+  settingDescription: {
+    fontSize: 14,
+    color: '#666',
+  },
+  // Alphabet section styles
+  alphabetSection: {
+    marginTop: 16,
+  },
+  // Flashcard styles
+  flashcardContainer: {
+    flex: 1,
+    paddingTop: 60,
+  },
+  flashcardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 40,
+    paddingHorizontal: 20,
+  },
+  exitButton: {
+    backgroundColor: '#4f81cb',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  flashcardCounter: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666',
+  },
+  flashcard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 40,
+    marginHorizontal: 20,
+    marginBottom: 40,
+    alignItems: 'center',
+    minHeight: 300,
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#e1e5e9',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  flashcardCharacter: {
+    fontSize: 120,
+    color: '#333',
+    marginBottom: 30,
+    textAlign: 'center',
+  },
+  flashcardAnswer: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#4f81cb',
+    textAlign: 'center',
+  },
+  revealButton: {
+    backgroundColor: '#4f81cb',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  revealButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  flashcardControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 60,
+  },
+  flashcardNavButton: {
+    backgroundColor: '#4f81cb',
+    borderRadius: 25,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Flashcard practice section styles
+  flashcardSection: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginLeft: 12,
+  },
+  sectionDescription: {
+    fontSize: 16,
+    color: '#666',
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  startButton: {
+    backgroundColor: '#4f81cb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  startButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  practiceInfo: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#e1e5e9',
+  },
+  practiceInfoText: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
 });
 
