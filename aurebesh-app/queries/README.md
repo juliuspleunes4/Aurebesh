@@ -37,6 +37,18 @@ This folder contains SQL queries that **must be executed** in your Supabase data
 
 **Required for:** Settings > Danger Zone > Delete Account feature
 
+### `learning_statistics.sql`
+**Purpose:** Enables learning progress tracking and statistics
+
+**What it does:**
+- Creates `learning_sessions` table to track individual learning sessions
+- Creates `learning_statistics` table for overall user progress
+- Sets up automatic statistics updates via triggers
+- Creates `get_user_learning_stats()` function for easy data retrieval
+- Enables tracking of scores, streaks, accuracy, and time spent learning
+
+**Required for:** Learn Screen progress tracking and statistics
+
 ## ⚠️ Important Notes
 
 - **Run queries in order** - Some queries may depend on others

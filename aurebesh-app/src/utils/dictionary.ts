@@ -50,7 +50,7 @@ export const aurebeshAlphabet: Record<string, string> = {
 
 /**
  * Basic word dictionary for learning Aurebesh.
- * Start with simple, common words and expand gradually.
+ * This dictionary will be expanded over time.
  */
 export const wordDictionary: WordPair[] = [
   // Easy words (3-4 letters)

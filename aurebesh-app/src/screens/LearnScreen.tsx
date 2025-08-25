@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   View, 
   Text, 
@@ -14,6 +14,7 @@ import { useSettings } from '../context/SettingsContext';
 import { getFontFamily, getAurebeshFontFamily } from '../utils/fonts';
 import { hapticLight, hapticMedium, hapticSuccess } from '../utils/haptics';
 import { getRandomWord, WordPair, getCategories } from '../utils/dictionary';
+import { saveCompleteLearningSession, SessionSummary, getUserLearningStatistics, updateUserStatistics } from '../utils/learningDatabase';
 
 /**
  * LearnScreen allows users to practice translating Aurebesh to English.
@@ -32,13 +33,160 @@ const LearnScreen: React.FC = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
+  
+  // Session tracking for database storage
+  const [sessionStartTime, setSessionStartTime] = useState<Date>(new Date());
+  const [sessionQuestionsCorrect, setSessionQuestionsCorrect] = useState(0);
+  const [sessionMaxStreak, setSessionMaxStreak] = useState(0);
+  
+  // Ref to store latest session data for cleanup
+  const sessionDataRef = useRef<SessionSummary>({
+    difficulty: 'easy',
+    questionsAttempted: 0,
+    questionsCorrect: 0,
+    maxStreak: 0,
+    score: 0,
+    startTime: new Date(),
+  });
 
   /**
-   * Initialize the screen with a random word
+   * Initialize the screen with a random word and start a new session
+   */
+  useEffect(() => {
+    loadUserStatistics();
+  }, []);
+
+  /**
+   * Load user statistics from database and initialize session
+   */
+  const loadUserStatistics = async () => {
+    try {
+      const stats = await getUserLearningStatistics();
+      if (stats) {
+        // Load existing stats from database into UI
+        console.log('Loading stats from database:', stats);
+        setScore(stats.total_questions_correct || 0); // Correct = total correct answers
+        setStreak(stats.current_streak || 0); // Load current streak from database (persists across restarts)
+        setQuestionsAnswered(stats.total_questions_attempted || 0); // Total = total attempted
+        setSessionQuestionsCorrect(stats.total_questions_correct || 0);
+        setSessionMaxStreak(stats.best_streak || 0);
+      }
+      loadNewWord(); // Just load a word, don't reset stats
+    } catch (error) {
+      console.error('Error loading user statistics:', error);
+      loadNewWord();
+    }
+  };
+
+  /**
+   * Load new word when difficulty changes
    */
   useEffect(() => {
     loadNewWord();
   }, [difficulty]);
+
+  /**
+   * Update session data ref whenever values change
+   */
+  useEffect(() => {
+    sessionDataRef.current = {
+      difficulty,
+      questionsAttempted: questionsAnswered,
+      questionsCorrect: score, // Use score (correct answers) instead of sessionQuestionsCorrect
+      maxStreak: streak, // Use current streak instead of sessionMaxStreak
+      score,
+      startTime: sessionStartTime,
+    };
+  }, [difficulty, questionsAnswered, score, streak, sessionStartTime]);
+
+  /**
+   * Save stats to database whenever score, streak, or questionsAnswered changes
+   */
+  useEffect(() => {
+    // Only save if at least one question has been answered
+    if (questionsAnswered > 0) {
+      console.log('Stats changed, updating database:', {
+        questions_attempted: questionsAnswered,
+        questions_correct: score,
+        current_streak: streak,
+        difficulty,
+      });
+      
+      // Use a timeout to debounce rapid state changes
+      const timeoutId = setTimeout(() => {
+        updateUserStatistics({
+          questions_attempted: questionsAnswered,
+          questions_correct: score,
+          current_streak: streak,
+          difficulty,
+        });
+      }, 100); // Wait 100ms before saving to avoid race conditions
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [score, streak, questionsAnswered]); // Save whenever any of these change
+
+  /**
+   * Save session when component unmounts
+   */
+  useEffect(() => {
+    return () => {
+      // Save final session when component unmounts using ref data
+      if (sessionDataRef.current.questionsAttempted > 0) {
+        console.log('Component unmounting, saving final session with data:', sessionDataRef.current);
+        saveCompleteLearningSession(sessionDataRef.current);
+      }
+    };
+  }, []);
+
+  /**
+   * Start a new learning session (don't reset stats from database)
+   */
+  const startNewSession = () => {
+    setSessionStartTime(new Date());
+    // Don't reset score, streak, questionsAnswered - they come from database
+    loadNewWord();
+  };
+
+  /**
+   * Save the current session to the database
+   */
+  const saveCurrentSession = async () => {
+    try {
+      const sessionData: SessionSummary = {
+        difficulty,
+        questionsAttempted: questionsAnswered,
+        questionsCorrect: sessionQuestionsCorrect,
+        maxStreak: sessionMaxStreak,
+        score,
+        startTime: sessionStartTime,
+      };
+
+      console.log('Attempting to save session with data:', sessionData);
+
+      const success = await saveCompleteLearningSession(sessionData);
+      if (!success) {
+        console.warn('Failed to save learning session to database');
+      } else {
+        console.log('✅ Successfully saved learning session to database!');
+      }
+    } catch (error) {
+      console.error('Error saving session:', error);
+    }
+  };
+
+  /**
+   * Reset session for new difficulty
+   */
+  const resetSessionForNewDifficulty = async () => {
+    // Save current session before resetting
+    if (questionsAnswered > 0) {
+      await saveCurrentSession();
+    }
+    
+    // Start fresh session with new difficulty
+    startNewSession();
+  };
 
   /**
    * Load a new random word based on current difficulty
@@ -65,11 +213,20 @@ const LearnScreen: React.FC = () => {
     const isAnswerCorrect = userAnswer.trim().toLowerCase() === currentWord.english.toLowerCase();
     setIsCorrect(isAnswerCorrect);
 
+    // Update session statistics
+    const newQuestionsAnswered = questionsAnswered + 1;
+
     if (isAnswerCorrect) {
       await hapticSuccess(settings.hapticFeedbackEnabled);
-      setScore(score + 1);
-      setStreak(streak + 1);
-      setQuestionsAnswered(questionsAnswered + 1);
+      const newScore = score + 1;
+      const newStreak = streak + 1;
+      
+      console.log('Correct answer! Setting new streak:', newStreak);
+      
+      // Batch all state updates together to prevent multiple useEffect triggers
+      setScore(newScore);
+      setStreak(newStreak);
+      setQuestionsAnswered(newQuestionsAnswered);
       
       // Auto-advance after correct answer
       setTimeout(() => {
@@ -77,9 +234,14 @@ const LearnScreen: React.FC = () => {
       }, 1500);
     } else {
       await hapticMedium(settings.hapticFeedbackEnabled);
-      setStreak(0);
-      setQuestionsAnswered(questionsAnswered + 1);
+      console.log('Wrong answer! Resetting streak to 0');
+      
+      // Batch state updates
+      setStreak(0); // Reset streak on wrong answer
+      setQuestionsAnswered(newQuestionsAnswered);
     }
+
+    // Database save happens automatically via useEffect
   };
 
   /**
@@ -105,7 +267,8 @@ const LearnScreen: React.FC = () => {
   const handleSkip = async () => {
     await hapticLight(settings.hapticFeedbackEnabled);
     setStreak(0); // Reset streak when skipping
-    setQuestionsAnswered(questionsAnswered + 1);
+    const newQuestionsAnswered = questionsAnswered + 1;
+    setQuestionsAnswered(newQuestionsAnswered);
     loadNewWord();
   };
 
@@ -114,6 +277,8 @@ const LearnScreen: React.FC = () => {
    */
   const handleDifficultyChange = async (newDifficulty: 'easy' | 'medium' | 'hard') => {
     await hapticLight(settings.hapticFeedbackEnabled);
+    
+    // Don't reset session when changing difficulty, just update difficulty
     setDifficulty(newDifficulty);
     setShowDifficultyModal(false);
   };
