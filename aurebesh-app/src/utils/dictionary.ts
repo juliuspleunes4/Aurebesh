@@ -16,35 +16,36 @@ export interface WordPair {
 
 /**
  * Basic Aurebesh character mappings
- * These are the fundamental letters used to build words
+ * These map to regular ASCII letters (a-z) which the Aurebesh font will render as Aurebesh characters
+ * Most Aurebesh fonts replace the standard Latin alphabet with Aurebesh glyphs
  */
 export const aurebeshAlphabet: Record<string, string> = {
-  'a': 'aurek',     // 𝔞
-  'b': 'besh',      // 𝔟
-  'c': 'cresh',     // 𝔠
-  'd': 'dorn',      // 𝔡
-  'e': 'esk',       // 𝔢
-  'f': 'forn',      // 𝔣
-  'g': 'grek',      // 𝔤
-  'h': 'herf',      // 𝔥
-  'i': 'isk',       // 𝔦
-  'j': 'jenth',     // 𝔧
-  'k': 'krill',     // 𝔨
-  'l': 'leth',      // 𝔩
-  'm': 'mern',      // 𝔪
-  'n': 'nern',      // 𝔫
-  'o': 'osk',       // 𝔬
-  'p': 'peth',      // 𝔭
-  'q': 'qek',       // 𝔮
-  'r': 'resh',      // 𝔯
-  's': 'senth',     // 𝔰
-  't': 'trill',     // 𝔱
-  'u': 'usk',       // 𝔲
-  'v': 'vev',       // 𝔳
-  'w': 'wesk',      // 𝔴
-  'x': 'xesh',      // 𝔵
-  'y': 'yirt',      // 𝔶
-  'z': 'zerek',     // 𝔷
+  'a': 'a',    // Aurek
+  'b': 'b',    // Besh
+  'c': 'c',    // Cresh
+  'd': 'd',    // Dorn
+  'e': 'e',    // Esk
+  'f': 'f',    // Forn
+  'g': 'g',    // Grek
+  'h': 'h',    // Herf
+  'i': 'i',    // Isk
+  'j': 'j',    // Jenth
+  'k': 'k',    // Krill
+  'l': 'l',    // Leth
+  'm': 'm',    // Mern
+  'n': 'n',    // Nern
+  'o': 'o',    // Osk
+  'p': 'p',    // Peth
+  'q': 'q',    // Qek
+  'r': 'r',    // Resh
+  's': 's',    // Senth
+  't': 't',    // Trill
+  'u': 'u',    // Usk
+  'v': 'v',    // Vev
+  'w': 'w',    // Wesk
+  'x': 'x',    // Xesh
+  'y': 'y',    // Yirt
+  'z': 'z',    // Zerek
 };
 
 /**
@@ -53,35 +54,35 @@ export const aurebeshAlphabet: Record<string, string> = {
  */
 export const wordDictionary: WordPair[] = [
   // Easy words (3-4 letters)
-  { english: 'cat', aurebesh: '𝔠𝔞𝔱', difficulty: 'easy', category: 'animals' },
-  { english: 'dog', aurebesh: '𝔡𝔬𝔤', difficulty: 'easy', category: 'animals' },
-  { english: 'sun', aurebesh: '𝔰𝔲𝔫', difficulty: 'easy', category: 'nature' },
-  { english: 'moon', aurebesh: '𝔪𝔬𝔬𝔫', difficulty: 'easy', category: 'nature' },
-  { english: 'book', aurebesh: '𝔟𝔬𝔬𝔨', difficulty: 'easy', category: 'objects' },
-  { english: 'fire', aurebesh: '𝔣𝔦𝔯𝔢', difficulty: 'easy', category: 'elements' },
-  { english: 'love', aurebesh: '𝔩𝔬𝔳𝔢', difficulty: 'easy', category: 'emotions' },
-  { english: 'hope', aurebesh: '𝔥𝔬𝔭𝔢', difficulty: 'easy', category: 'emotions' },
-  { english: 'home', aurebesh: '𝔥𝔬𝔪𝔢', difficulty: 'easy', category: 'places' },
-  { english: 'blue', aurebesh: '𝔟𝔩𝔲𝔢', difficulty: 'easy', category: 'colors' },
+  { english: 'cat', aurebesh: 'cat', difficulty: 'easy', category: 'animals' },
+  { english: 'dog', aurebesh: 'dog', difficulty: 'easy', category: 'animals' },
+  { english: 'sun', aurebesh: 'sun', difficulty: 'easy', category: 'nature' },
+  { english: 'moon', aurebesh: 'moon', difficulty: 'easy', category: 'nature' },
+  { english: 'book', aurebesh: 'book', difficulty: 'easy', category: 'objects' },
+  { english: 'fire', aurebesh: 'fire', difficulty: 'easy', category: 'elements' },
+  { english: 'love', aurebesh: 'love', difficulty: 'easy', category: 'emotions' },
+  { english: 'hope', aurebesh: 'hope', difficulty: 'easy', category: 'emotions' },
+  { english: 'home', aurebesh: 'home', difficulty: 'easy', category: 'places' },
+  { english: 'blue', aurebesh: 'blue', difficulty: 'easy', category: 'colors' },
   
   // Medium words (5-6 letters)
-  { english: 'force', aurebesh: '𝔣𝔬𝔯𝔠𝔢', difficulty: 'medium', category: 'star wars' },
-  { english: 'peace', aurebesh: '𝔭𝔢𝔞𝔠𝔢', difficulty: 'medium', category: 'concepts' },
-  { english: 'light', aurebesh: '𝔩𝔦𝔤𝔥𝔱', difficulty: 'medium', category: 'concepts' },
-  { english: 'power', aurebesh: '𝔭𝔬𝔴𝔢𝔯', difficulty: 'medium', category: 'concepts' },
-  { english: 'water', aurebesh: '𝔴𝔞𝔱𝔢𝔯', difficulty: 'medium', category: 'elements' },
-  { english: 'wisdom', aurebesh: '𝔴𝔦𝔰𝔡𝔬𝔪', difficulty: 'medium', category: 'concepts' },
-  { english: 'friend', aurebesh: '𝔣𝔯𝔦𝔢𝔫𝔡', difficulty: 'medium', category: 'relationships' },
-  { english: 'galaxy', aurebesh: '𝔤𝔞𝔩𝔞𝔵𝔶', difficulty: 'medium', category: 'space' },
-  { english: 'planet', aurebesh: '𝔭𝔩𝔞𝔫𝔢𝔱', difficulty: 'medium', category: 'space' },
-  { english: 'temple', aurebesh: '𝔱𝔢𝔪𝔭𝔩𝔢', difficulty: 'medium', category: 'places' },
+  { english: 'force', aurebesh: 'force', difficulty: 'medium', category: 'star wars' },
+  { english: 'peace', aurebesh: 'peace', difficulty: 'medium', category: 'concepts' },
+  { english: 'light', aurebesh: 'light', difficulty: 'medium', category: 'concepts' },
+  { english: 'power', aurebesh: 'power', difficulty: 'medium', category: 'concepts' },
+  { english: 'water', aurebesh: 'water', difficulty: 'medium', category: 'elements' },
+  { english: 'wisdom', aurebesh: 'wisdom', difficulty: 'medium', category: 'concepts' },
+  { english: 'friend', aurebesh: 'friend', difficulty: 'medium', category: 'relationships' },
+  { english: 'galaxy', aurebesh: 'galaxy', difficulty: 'medium', category: 'space' },
+  { english: 'planet', aurebesh: 'planet', difficulty: 'medium', category: 'space' },
+  { english: 'temple', aurebesh: 'temple', difficulty: 'medium', category: 'places' },
   
   // Hard words (7+ letters)
-  { english: 'republic', aurebesh: '𝔯𝔢𝔭𝔲𝔟𝔩𝔦𝔠', difficulty: 'hard', category: 'star wars' },
-  { english: 'rebellion', aurebesh: '𝔯𝔢𝔟𝔢𝔩𝔩𝔦𝔬𝔫', difficulty: 'hard', category: 'star wars' },
-  { english: 'knowledge', aurebesh: '𝔨𝔫𝔬𝔴𝔩𝔢𝔡𝔤𝔢', difficulty: 'hard', category: 'concepts' },
-  { english: 'adventure', aurebesh: '𝔞𝔡𝔳𝔢𝔫𝔱𝔲𝔯𝔢', difficulty: 'hard', category: 'concepts' },
-  { english: 'challenge', aurebesh: '𝔠𝔥𝔞𝔩𝔩𝔢𝔫𝔤𝔢', difficulty: 'hard', category: 'concepts' },
+  { english: 'republic', aurebesh: 'republic', difficulty: 'hard', category: 'star wars' },
+  { english: 'rebellion', aurebesh: 'rebellion', difficulty: 'hard', category: 'star wars' },
+  { english: 'knowledge', aurebesh: 'knowledge', difficulty: 'hard', category: 'concepts' },
+  { english: 'adventure', aurebesh: 'adventure', difficulty: 'hard', category: 'concepts' },
+  { english: 'challenge', aurebesh: 'challenge', difficulty: 'hard', category: 'concepts' },
 ];
 
 /**
@@ -120,9 +121,9 @@ export const getCategories = (): string[] => {
 
 /**
  * Convert English text to Aurebesh using the character mappings
- * This is a simple transliteration function
+ * This transliterates English characters to their Aurebesh equivalents
  * @param englishText - The English text to convert
- * @returns The Aurebesh equivalent
+ * @returns The Aurebesh equivalent using proper Unicode characters
  */
 export const translateToAurebesh = (englishText: string): string => {
   return englishText
@@ -130,12 +131,7 @@ export const translateToAurebesh = (englishText: string): string => {
     .split('')
     .map(char => {
       if (char === ' ') return ' ';
-      if (char in aurebeshAlphabet) {
-        // For now, we'll use placeholder characters until we have proper Aurebesh font mapping
-        const index = char.charCodeAt(0) - 97; // a=0, b=1, etc.
-        return String.fromCharCode(0x1D51E + index); // Mathematical script letters as placeholder
-      }
-      return char;
+      return aurebeshAlphabet[char] || char;
     })
     .join('');
 };
