@@ -9,7 +9,7 @@
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" width="32" title="JavaScript">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azuresqldatabase/azuresqldatabase-original.svg" alt="SQL" width="32" title="SQL">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React Native" width="32" title="React Native">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/expo/expo-original.svg" alt="Expo" width="32" title="Expo">
+  <img src="aurebesh-app/assets/icons8-expo-32.png" alt="Expo" width="32" title="Expo">
 </p>
 
 **Aurebesh** is a comprehensive React Native + Expo mobile application designed to teach users the Aurebesh writing system from the Star Wars universe. This open-source educational app provides an interactive and accessible learning experience for all users, featuring modern UI design, smooth animations, and comprehensive learning tools.
