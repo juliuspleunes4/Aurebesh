@@ -1,29 +1,50 @@
 {
   "expo": {
-    "name": "aurebesh-app",
+    "name": "Aurebesh",
     "slug": "aurebesh-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "description": "Learn to read and write Aurebesh, the Star Wars alphabet",
+    "keywords": [
+      "aurebesh",
+      "star wars",
+      "learning",
+      "education",
+      "alphabet"
+    ],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.juliuspleunes.aurebesh",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.juliuspleunes.aurebesh",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "99ef55b5-75fd-4b31-bb5b-cf2d486ae13c"
+      }
+    },
+    "owner": "juliuspleunes"
   }
 }

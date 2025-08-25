@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "4c02400a-e56e-4503-9045-692494153165"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.juliuspleunes.aurebesh",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
+  }
+}
