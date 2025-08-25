@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -11,6 +11,7 @@ import {
   Animated
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSettings } from '../context/SettingsContext';
 import { getFontFamily, getAurebeshFontFamily } from '../utils/fonts';
 import { hapticLight, hapticMedium, hapticSuccess } from '../utils/haptics';
@@ -63,6 +64,15 @@ const ReadScreen: React.FC = () => {
   }, []);
 
   /**
+   * Refresh statistics when screen is focused (e.g., after returning from Settings)
+   */
+  useFocusEffect(
+    useCallback(() => {
+      refreshStatistics();
+    }, [])
+  );
+
+  /**
    * Load user statistics from database and initialize session
    */
   const loadUserStatistics = async () => {
@@ -81,6 +91,33 @@ const ReadScreen: React.FC = () => {
     } catch (error) {
       console.error('Error loading user statistics:', error);
       loadNewWord();
+    }
+  };
+
+  /**
+   * Refresh statistics from database without loading a new word
+   */
+  const refreshStatistics = async () => {
+    try {
+      const stats = await getUserLearningStatistics();
+      if (stats) {
+        console.log('Refreshing stats from database:', stats);
+        setScore(stats.total_questions_correct || 0);
+        setStreak(stats.current_streak || 0);
+        setQuestionsAnswered(stats.total_questions_attempted || 0);
+        setSessionQuestionsCorrect(stats.total_questions_correct || 0);
+        setSessionMaxStreak(stats.best_streak || 0);
+      } else {
+        // If no stats found (e.g., after reset), set everything to 0
+        console.log('No stats found, resetting to zero');
+        setScore(0);
+        setStreak(0);
+        setQuestionsAnswered(0);
+        setSessionQuestionsCorrect(0);
+        setSessionMaxStreak(0);
+      }
+    } catch (error) {
+      console.error('Error refreshing user statistics:', error);
     }
   };
 
