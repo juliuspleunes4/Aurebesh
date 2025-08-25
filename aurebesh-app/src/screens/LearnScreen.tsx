@@ -72,6 +72,7 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
   const [flashcardIndex, setFlashcardIndex] = useState(0);
   const [showFlashcardAnswer, setShowFlashcardAnswer] = useState(false);
   const [isFlashcardMode, setIsFlashcardMode] = useState(false);
+  const [shuffledAlphabet, setShuffledAlphabet] = useState<AurebeshCharacter[]>([]);
   const screenWidth = Dimensions.get('window').width;
   
   /**
@@ -102,13 +103,29 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
   };
 
   /**
-   * Starts flashcard mode with the first character
+   * Shuffles an array using the Fisher-Yates algorithm
+   * @param array - The array to shuffle
+   * @returns A new shuffled array
+   */
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  /**
+   * Starts flashcard mode with a randomized alphabet order
    */
   const startFlashcards = async () => {
     await hapticLight(settings.hapticFeedbackEnabled);
+    const shuffled = shuffleArray(aurebeshAlphabet);
+    setShuffledAlphabet(shuffled);
     setIsFlashcardMode(true);
     setFlashcardIndex(0);
-    setCurrentFlashcard(aurebeshAlphabet[0]);
+    setCurrentFlashcard(shuffled[0]);
     setShowFlashcardAnswer(false);
   };
 
@@ -119,6 +136,19 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
     await hapticLight(settings.hapticFeedbackEnabled);
     setIsFlashcardMode(false);
     setCurrentFlashcard(null);
+    setShowFlashcardAnswer(false);
+    setShuffledAlphabet([]);
+  };
+
+  /**
+   * Reshuffles the flashcards and starts over
+   */
+  const reshuffleFlashcards = async () => {
+    await hapticLight(settings.hapticFeedbackEnabled);
+    const shuffled = shuffleArray(aurebeshAlphabet);
+    setShuffledAlphabet(shuffled);
+    setFlashcardIndex(0);
+    setCurrentFlashcard(shuffled[0]);
     setShowFlashcardAnswer(false);
   };
 
@@ -135,9 +165,9 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
    */
   const nextFlashcard = async () => {
     await hapticLight(settings.hapticFeedbackEnabled);
-    const nextIndex = (flashcardIndex + 1) % aurebeshAlphabet.length;
+    const nextIndex = (flashcardIndex + 1) % shuffledAlphabet.length;
     setFlashcardIndex(nextIndex);
-    setCurrentFlashcard(aurebeshAlphabet[nextIndex]);
+    setCurrentFlashcard(shuffledAlphabet[nextIndex]);
     setShowFlashcardAnswer(false);
   };
 
@@ -146,9 +176,9 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
    */
   const previousFlashcard = async () => {
     await hapticLight(settings.hapticFeedbackEnabled);
-    const prevIndex = flashcardIndex === 0 ? aurebeshAlphabet.length - 1 : flashcardIndex - 1;
+    const prevIndex = flashcardIndex === 0 ? shuffledAlphabet.length - 1 : flashcardIndex - 1;
     setFlashcardIndex(prevIndex);
-    setCurrentFlashcard(aurebeshAlphabet[prevIndex]);
+    setCurrentFlashcard(shuffledAlphabet[prevIndex]);
     setShowFlashcardAnswer(false);
   };
 
@@ -252,9 +282,22 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
               >
                 <MaterialIcons name="close" size={24} color="#ffffff" />
               </TouchableOpacity>
-              <Text style={[styles.flashcardCounter, { fontFamily: getFontFamily() }]}>
-                {flashcardIndex + 1} / {aurebeshAlphabet.length}
-              </Text>
+              
+              <View style={styles.flashcardHeaderCenter}>
+                <Text style={[styles.flashcardCounter, { fontFamily: getFontFamily() }]}>
+                  {flashcardIndex + 1} / {shuffledAlphabet.length}
+                </Text>
+                <TouchableOpacity 
+                  style={styles.shuffleButton}
+                  onPress={reshuffleFlashcards}
+                  accessibilityRole="button"
+                  accessibilityLabel="Shuffle flashcards"
+                >
+                  <MaterialIcons name="shuffle" size={16} color="#666" />
+                </TouchableOpacity>
+              </View>
+              
+              <View style={{ width: 40 }} />
             </View>
 
             {currentFlashcard && (
@@ -583,6 +626,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
     paddingHorizontal: 20,
+  },
+  flashcardHeaderCenter: {
+    alignItems: 'center',
+  },
+  shuffleButton: {
+    marginTop: 8,
+    padding: 4,
   },
   exitButton: {
     backgroundColor: '#4f81cb',
