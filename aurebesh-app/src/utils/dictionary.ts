@@ -49,7 +49,6 @@ export const aurebeshAlphabet: Record<string, string> = {
 };
 
 /**
- * Basic word dictionary for learning Aurebesh.
  * Comprehensive word collection across multiple categories and difficulty levels.
  * This collection will be expanded over time with more words and categories.
  */
