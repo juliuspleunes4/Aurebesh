@@ -34,6 +34,7 @@ const ReadScreen: React.FC = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   
   // Animation for modal content
   const modalSlideAnim = useRef(new Animated.Value(300)).current; // Start 300px below
@@ -109,6 +110,9 @@ const ReadScreen: React.FC = () => {
    */
   useEffect(() => {
     if (showDifficultyModal) {
+      // Show modal first, then animate in
+      setModalVisible(true);
+      
       // Reset to initial positions before animating in
       backdropOpacityAnim.setValue(0);
       modalSlideAnim.setValue(300);
@@ -139,7 +143,10 @@ const ReadScreen: React.FC = () => {
           duration: 250,
           useNativeDriver: true,
         })
-      ]).start();
+      ]).start(() => {
+        // Hide modal after animation completes
+        setModalVisible(false);
+      });
     }
   }, [showDifficultyModal, modalSlideAnim, backdropOpacityAnim]);
 
@@ -539,7 +546,7 @@ const ReadScreen: React.FC = () => {
       <Modal
         animationType="none"
         transparent={true}
-        visible={showDifficultyModal}
+        visible={modalVisible}
         onRequestClose={() => setShowDifficultyModal(false)}
       >
         <Animated.View style={[styles.modalOverlay, { opacity: backdropOpacityAnim }]}>
