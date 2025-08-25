@@ -7,7 +7,8 @@ import {
   TextInput, 
   Alert,
   ScrollView,
-  Modal 
+  Modal,
+  Animated
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSettings } from '../context/SettingsContext';
@@ -33,6 +34,10 @@ const ReadScreen: React.FC = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
+  
+  // Animation for modal content
+  const modalSlideAnim = useRef(new Animated.Value(300)).current; // Start 300px below
+  const backdropOpacityAnim = useRef(new Animated.Value(0)).current; // Start transparent
   
   // Session tracking for database storage
   const [sessionStartTime, setSessionStartTime] = useState<Date>(new Date());
@@ -98,6 +103,45 @@ const ReadScreen: React.FC = () => {
       startTime: sessionStartTime,
     };
   }, [difficulty, questionsAnswered, score, streak, sessionStartTime]);
+
+  /**
+   * Animate modal content when modal visibility changes
+   */
+  useEffect(() => {
+    if (showDifficultyModal) {
+      // Reset to initial positions before animating in
+      backdropOpacityAnim.setValue(0);
+      modalSlideAnim.setValue(300);
+      
+      // Animate backdrop fade in and modal slide in
+      Animated.parallel([
+        Animated.timing(backdropOpacityAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(modalSlideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start();
+    } else {
+      // Animate backdrop fade out and modal slide out
+      Animated.parallel([
+        Animated.timing(backdropOpacityAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(modalSlideAnim, {
+          toValue: 300,
+          duration: 250,
+          useNativeDriver: true,
+        })
+      ]).start();
+    }
+  }, [showDifficultyModal, modalSlideAnim, backdropOpacityAnim]);
 
   /**
    * Save stats to database whenever score, streak, or questionsAnswered changes
@@ -493,13 +537,20 @@ const ReadScreen: React.FC = () => {
 
       {/* Difficulty Selection Modal */}
       <Modal
-        animationType="slide"
+        animationType="none"
         transparent={true}
         visible={showDifficultyModal}
         onRequestClose={() => setShowDifficultyModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+        <Animated.View style={[styles.modalOverlay, { opacity: backdropOpacityAnim }]}>
+          <Animated.View 
+            style={[
+              styles.modalContent,
+              {
+                transform: [{ translateY: modalSlideAnim }]
+              }
+            ]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { fontFamily: getFontFamily() }]}>
                 Select Difficulty
@@ -526,8 +577,8 @@ const ReadScreen: React.FC = () => {
                 )}
               </TouchableOpacity>
             ))}
-          </View>
-        </View>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </ScrollView>
   );
