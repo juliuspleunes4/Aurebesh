@@ -115,7 +115,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Glow Image */}
         <View style={styles.imageContainer}>
           <Image 
-            source={require('../../assets/glow_register.png')}
+            source={require('../../assets/splash-icon.png')}
             style={styles.glowImage}
             resizeMode="contain"
           />
