@@ -2,10 +2,11 @@ import * as Font from 'expo-font';
 
 /**
  * Custom fonts configuration for the Aurebesh app.
- * Loads the NOYH R Medium font for a consistent, playful typography.
+ * Loads the NOYH R Medium font for UI and Aurebesh font for character display.
  */
 export const customFonts = {
   'NOYH-R-Medium': require('../../fonts/noyh-r-medium.ttf'),
+  'Aurebesh': require('../../fonts/Aurebesh.otf'),
 };
 
 /**
@@ -24,4 +25,12 @@ export const loadFonts = async (): Promise<void> => {
  */
 export const getFontFamily = (): string => {
   return 'NOYH-R-Medium';
+};
+
+/**
+ * Returns the Aurebesh font family name for displaying Aurebesh characters.
+ * @returns The Aurebesh font family name
+ */
+export const getAurebeshFontFamily = (): string => {
+  return 'Aurebesh';
 };
