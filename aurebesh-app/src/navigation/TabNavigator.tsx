@@ -77,7 +77,7 @@ const TabNavigator: React.FC = () => {
     >
       <Tab.Screen
         name="Learn"
-        component={LearnScreen}
+        component={ReadScreen}
         options={{
           title: 'Read',
           tabBarIcon: ({ color }) => (
@@ -97,7 +97,7 @@ const TabNavigator: React.FC = () => {
       />
       <Tab.Screen
         name="Read"
-        component={ReadScreen}
+        component={LearnScreen}
         options={{
           title: 'Learn',
           tabBarIcon: ({ color }) => (

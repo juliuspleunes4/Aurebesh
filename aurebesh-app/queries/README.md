@@ -47,7 +47,7 @@ This folder contains SQL queries that **must be executed** in your Supabase data
 - Creates `get_user_learning_stats()` function for easy data retrieval
 - Enables tracking of scores, streaks, accuracy, and time spent learning
 
-**Required for:** Learn Screen progress tracking and statistics
+**Required for:** Read Screen progress tracking and statistics
 
 ## ⚠️ Important Notes
 
