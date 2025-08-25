@@ -307,7 +307,7 @@ const ReadScreen: React.FC = () => {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* Header */}
       <View style={styles.header}>
-        <MaterialIcons name="school" size={48} color="#4f81cb" />
+        <MaterialIcons name="chrome-reader-mode" size={48} color="#4f81cb" />
         <Text style={[styles.title, { fontFamily: getFontFamily() }]}>Read Aurebesh</Text>
         <Text style={[styles.subtitle, { fontFamily: getFontFamily() }]}>
           Translate Aurebesh characters to English

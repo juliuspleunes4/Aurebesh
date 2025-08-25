@@ -183,7 +183,7 @@ const LearnScreen: React.FC = () => {
           <>
             {/* Header Section */}
             <View style={styles.header}>
-              <MaterialIcons name="chrome-reader-mode" size={48} color="#4f81cb" />
+              <MaterialIcons name="school" size={48} color="#4f81cb" />
               <Text style={[styles.title, { fontFamily: getFontFamily() }]}>
                 Learn Aurebesh
               </Text>
