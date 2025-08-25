@@ -17,6 +17,7 @@ import { useSettings } from '../context/SettingsContext';
 import { getFontFamily } from '../utils/fonts';
 import { hapticMedium, hapticLight } from '../utils/haptics';
 import { calculateStorageUsage, formatBytes, StorageBreakdown, clearNetworkCache } from '../utils/storage';
+import { resetUserStatistics } from '../utils/learningDatabase';
 
 /**
  * SettingsScreen allows users to customize app preferences.
@@ -121,6 +122,64 @@ const SettingsScreen: React.FC = () => {
               Alert.alert(
                 'Error',
                 'Failed to delete account. Please try again or contact support.',
+                [{ text: 'OK' }]
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  /**
+   * Handles resetting all learning statistics with confirmation dialog.
+   */
+  const handleResetStatistics = async () => {
+    await hapticMedium(settings.hapticFeedbackEnabled);
+    
+    Alert.alert(
+      'Reset Statistics',
+      'This will permanently delete all your learning progress, statistics, and session history. This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+          onPress: async () => {
+            await hapticLight(settings.hapticFeedbackEnabled);
+          },
+        },
+        {
+          text: 'Reset All',
+          style: 'destructive',
+          onPress: async () => {
+            await hapticMedium(settings.hapticFeedbackEnabled);
+            
+            try {
+              const success = await resetUserStatistics();
+              
+              if (success) {
+                Alert.alert(
+                  'Statistics Reset',
+                  'All your learning statistics have been successfully reset.',
+                  [{ 
+                    text: 'OK',
+                    onPress: async () => {
+                      await hapticLight(settings.hapticFeedbackEnabled);
+                    }
+                  }]
+                );
+              } else {
+                Alert.alert(
+                  'Error',
+                  'Failed to reset statistics. Please try again or contact support.',
+                  [{ text: 'OK' }]
+                );
+              }
+            } catch (error) {
+              console.error('Error resetting statistics:', error);
+              Alert.alert(
+                'Error',
+                'Failed to reset statistics. Please try again or contact support.',
                 [{ text: 'OK' }]
               );
             }
@@ -324,6 +383,13 @@ const SettingsScreen: React.FC = () => {
       {/* Danger Zone */}
       <View style={[styles.section, styles.dangerSection]}>
         <Text style={[styles.sectionTitle, styles.dangerTitle, { fontFamily: getFontFamily() }]}>Danger Zone</Text>
+        
+        {/* Reset Statistics */}
+        <TouchableOpacity style={[styles.settingItem, styles.dangerItem]} onPress={handleResetStatistics}>
+          <MaterialIcons name="refresh" size={24} color="#ff4444" style={styles.settingIcon} />
+          <Text style={[styles.settingLabel, styles.dangerText, { fontFamily: getFontFamily() }]}>Reset Statistics</Text>
+          <MaterialIcons name="chevron-right" size={20} color="#ff4444" />
+        </TouchableOpacity>
         
         {/* Delete Account */}
         <TouchableOpacity style={[styles.settingItem, styles.dangerItem]} onPress={handleDeleteAccount}>

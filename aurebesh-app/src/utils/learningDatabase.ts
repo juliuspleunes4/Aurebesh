@@ -423,3 +423,91 @@ export const hasLearningData = async (): Promise<boolean> => {
     return false;
   }
 };
+
+/**
+ * Resets all user learning statistics to zero
+ * @returns Promise<boolean> - Success status
+ */
+export const resetUserStatistics = async (): Promise<boolean> => {
+  try {
+    if (!isSupabaseAvailable()) {
+      console.warn('Supabase not configured - stats not reset');
+      return false;
+    }
+
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) {
+      console.error('No authenticated user found');
+      return false;
+    }
+
+    // Reset all statistics to zero
+    const resetData = {
+      total_sessions: 0,
+      total_questions_attempted: 0,
+      total_questions_correct: 0,
+      current_streak: 0,
+      best_streak: 0,
+      best_score: 0,
+      easy_questions_correct: 0,
+      easy_questions_attempted: 0,
+      medium_questions_correct: 0,
+      medium_questions_attempted: 0,
+      hard_questions_correct: 0,
+      hard_questions_attempted: 0,
+      updated_at: new Date().toISOString(),
+      first_session_date: null,
+      last_session_date: null,
+    };
+
+    // Try to update existing record first
+    const { data: existing } = await supabase
+      .from('learning_statistics')
+      .select('id')
+      .eq('user_id', user.user.id)
+      .single();
+
+    if (existing) {
+      // Update existing record
+      const { error } = await supabase
+        .from('learning_statistics')
+        .update(resetData)
+        .eq('user_id', user.user.id);
+
+      if (error) {
+        console.error('Error resetting user statistics:', error);
+        return false;
+      }
+    } else {
+      // Create new record with reset values
+      const { error } = await supabase
+        .from('learning_statistics')
+        .insert({
+          ...resetData,
+          user_id: user.user.id,
+        });
+
+      if (error) {
+        console.error('Error creating reset user statistics:', error);
+        return false;
+      }
+    }
+
+    // Also delete all learning sessions for this user
+    const { error: sessionsError } = await supabase
+      .from('learning_sessions')
+      .delete()
+      .eq('user_id', user.user.id);
+
+    if (sessionsError) {
+      console.error('Error deleting learning sessions:', sessionsError);
+      // Don't return false here as the stats reset was successful
+    }
+
+    console.log('✅ Successfully reset user statistics and cleared sessions');
+    return true;
+  } catch (error) {
+    console.error('Error resetting user statistics:', error);
+    return false;
+  }
+};

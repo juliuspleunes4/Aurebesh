@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -7,9 +7,11 @@ import {
   TextInput, 
   Alert,
   ScrollView,
-  Modal 
+  Modal,
+  Animated
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSettings } from '../context/SettingsContext';
 import { getFontFamily, getAurebeshFontFamily } from '../utils/fonts';
 import { hapticLight, hapticMedium, hapticSuccess } from '../utils/haptics';
@@ -33,6 +35,11 @@ const ReadScreen: React.FC = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [showDifficultyModal, setShowDifficultyModal] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  // Animation for modal content
+  const modalSlideAnim = useRef(new Animated.Value(300)).current; // Start 300px below
+  const backdropOpacityAnim = useRef(new Animated.Value(0)).current; // Start transparent
   
   // Session tracking for database storage
   const [sessionStartTime, setSessionStartTime] = useState<Date>(new Date());
@@ -57,6 +64,15 @@ const ReadScreen: React.FC = () => {
   }, []);
 
   /**
+   * Refresh statistics when screen is focused (e.g., after returning from Settings)
+   */
+  useFocusEffect(
+    useCallback(() => {
+      refreshStatistics();
+    }, [])
+  );
+
+  /**
    * Load user statistics from database and initialize session
    */
   const loadUserStatistics = async () => {
@@ -75,6 +91,33 @@ const ReadScreen: React.FC = () => {
     } catch (error) {
       console.error('Error loading user statistics:', error);
       loadNewWord();
+    }
+  };
+
+  /**
+   * Refresh statistics from database without loading a new word
+   */
+  const refreshStatistics = async () => {
+    try {
+      const stats = await getUserLearningStatistics();
+      if (stats) {
+        console.log('Refreshing stats from database:', stats);
+        setScore(stats.total_questions_correct || 0);
+        setStreak(stats.current_streak || 0);
+        setQuestionsAnswered(stats.total_questions_attempted || 0);
+        setSessionQuestionsCorrect(stats.total_questions_correct || 0);
+        setSessionMaxStreak(stats.best_streak || 0);
+      } else {
+        // If no stats found (e.g., after reset), set everything to 0
+        console.log('No stats found, resetting to zero');
+        setScore(0);
+        setStreak(0);
+        setQuestionsAnswered(0);
+        setSessionQuestionsCorrect(0);
+        setSessionMaxStreak(0);
+      }
+    } catch (error) {
+      console.error('Error refreshing user statistics:', error);
     }
   };
 
@@ -98,6 +141,51 @@ const ReadScreen: React.FC = () => {
       startTime: sessionStartTime,
     };
   }, [difficulty, questionsAnswered, score, streak, sessionStartTime]);
+
+  /**
+   * Animate modal content when modal visibility changes
+   */
+  useEffect(() => {
+    if (showDifficultyModal) {
+      // Show modal first, then animate in
+      setModalVisible(true);
+      
+      // Reset to initial positions before animating in
+      backdropOpacityAnim.setValue(0);
+      modalSlideAnim.setValue(300);
+      
+      // Animate backdrop fade in and modal slide in
+      Animated.parallel([
+        Animated.timing(backdropOpacityAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(modalSlideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start();
+    } else {
+      // Animate backdrop fade out and modal slide out
+      Animated.parallel([
+        Animated.timing(backdropOpacityAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(modalSlideAnim, {
+          toValue: 300,
+          duration: 250,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        // Hide modal after animation completes
+        setModalVisible(false);
+      });
+    }
+  }, [showDifficultyModal, modalSlideAnim, backdropOpacityAnim]);
 
   /**
    * Save stats to database whenever score, streak, or questionsAnswered changes
@@ -493,13 +581,20 @@ const ReadScreen: React.FC = () => {
 
       {/* Difficulty Selection Modal */}
       <Modal
-        animationType="slide"
+        animationType="none"
         transparent={true}
-        visible={showDifficultyModal}
+        visible={modalVisible}
         onRequestClose={() => setShowDifficultyModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+        <Animated.View style={[styles.modalOverlay, { opacity: backdropOpacityAnim }]}>
+          <Animated.View 
+            style={[
+              styles.modalContent,
+              {
+                transform: [{ translateY: modalSlideAnim }]
+              }
+            ]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { fontFamily: getFontFamily() }]}>
                 Select Difficulty
@@ -526,8 +621,8 @@ const ReadScreen: React.FC = () => {
                 )}
               </TouchableOpacity>
             ))}
-          </View>
-        </View>
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </ScrollView>
   );
