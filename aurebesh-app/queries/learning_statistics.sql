@@ -49,21 +49,6 @@ CREATE INDEX IF NOT EXISTS idx_learning_statistics_user_id ON learning_statistic
 ALTER TABLE learning_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE learning_statistics ENABLE ROW LEVEL SECURITY;
 
--- Add current_streak column if it doesn't exist (migration for existing databases)
--- This ensures existing users get the current_streak functionality
-DO $$ 
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name='learning_statistics' AND column_name='current_streak'
-  ) THEN
-    ALTER TABLE learning_statistics ADD COLUMN current_streak INTEGER DEFAULT 0;
-    RAISE NOTICE 'Added current_streak column to learning_statistics table';
-  ELSE
-    RAISE NOTICE 'current_streak column already exists in learning_statistics table';
-  END IF;
-END $$;
-
 -- Create RLS policies
 -- Users can only access their own learning sessions
 CREATE POLICY "Users can view their own learning sessions" ON learning_sessions
