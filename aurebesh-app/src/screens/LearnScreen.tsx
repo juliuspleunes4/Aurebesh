@@ -358,59 +358,62 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
               </Text>
             </View>
 
-            {/* Alphabet Reference Button */}
-            <TouchableOpacity 
-              style={styles.settingItem}
-              onPress={async () => {
-                await hapticLight(settings.hapticFeedbackEnabled);
-                navigation.navigate('Alphabet');
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="View Aurebesh alphabet reference"
-            >
-              <MaterialIcons name="language" size={24} color="#4f81cb" style={styles.settingIcon} />
-              <View style={styles.settingText}>
-                <Text style={[styles.settingTitle, { fontFamily: getFontFamily() }]}>
-                  Aurebesh Alphabet
-                </Text>
-                <Text style={[styles.settingDescription, { fontFamily: getFontFamily() }]}>
-                  View complete alphabet reference
-                </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={24} color="#666" />
-            </TouchableOpacity>
-
-            {/* Flashcard Practice Section */}
-            <View style={styles.flashcardSection}>
-              <View style={styles.sectionHeader}>
-                <MaterialIcons name="quiz" size={24} color="#4f81cb" />
-                <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>
-                  Flashcard Practice
-                </Text>
-              </View>
-              
-              <Text style={[styles.sectionDescription, { fontFamily: getFontFamily() }]}>
-                Practice recognizing Aurebesh characters with interactive flashcards
-              </Text>
-
+            {/* Content Section */}
+            <View style={styles.contentSection}>
+              {/* Alphabet Reference Button */}
               <TouchableOpacity 
-                style={styles.startButton}
-                onPress={startFlashcards}
+                style={styles.settingItem}
+                onPress={async () => {
+                  await hapticLight(settings.hapticFeedbackEnabled);
+                  navigation.navigate('Alphabet');
+                }}
                 accessibilityRole="button"
-                accessibilityLabel="Start flashcard practice"
+                accessibilityLabel="View Aurebesh alphabet reference"
               >
-                <MaterialIcons name="play-arrow" size={24} color="#ffffff" />
-                <Text style={[styles.startButtonText, { fontFamily: getFontFamily() }]}>
-                  Start Practice
-                </Text>
+                <MaterialIcons name="language" size={24} color="#4f81cb" style={styles.settingIcon} />
+                <View style={styles.settingText}>
+                  <Text style={[styles.settingTitle, { fontFamily: getFontFamily() }]}>
+                    Aurebesh Alphabet
+                  </Text>
+                  <Text style={[styles.settingDescription, { fontFamily: getFontFamily() }]}>
+                    View complete alphabet reference
+                  </Text>
+                </View>
+                <MaterialIcons name="chevron-right" size={24} color="#666" />
               </TouchableOpacity>
 
-              <View style={styles.practiceInfo}>
-                <Text style={[styles.practiceInfoText, { fontFamily: getFontFamily() }]}>
-                  • {aurebeshAlphabet.length} characters to learn{'\n'}
-                  • Tap to reveal answers{'\n'}
-                  • Navigate with arrow buttons
+              {/* Flashcard Practice Section */}
+              <View style={styles.flashcardSection}>
+                <View style={styles.sectionHeader}>
+                  <MaterialIcons name="quiz" size={24} color="#4f81cb" />
+                  <Text style={[styles.sectionTitle, { fontFamily: getFontFamily() }]}>
+                    Flashcard Practice
+                  </Text>
+                </View>
+                
+                <Text style={[styles.sectionDescription, { fontFamily: getFontFamily() }]}>
+                  Practice recognizing Aurebesh characters with interactive flashcards
                 </Text>
+
+                <TouchableOpacity 
+                  style={styles.startButton}
+                  onPress={startFlashcards}
+                  accessibilityRole="button"
+                  accessibilityLabel="Start flashcard practice"
+                >
+                  <MaterialIcons name="play-arrow" size={24} color="#ffffff" />
+                  <Text style={[styles.startButtonText, { fontFamily: getFontFamily() }]}>
+                    Start Practice
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.practiceInfo}>
+                  <Text style={[styles.practiceInfoText, { fontFamily: getFontFamily() }]}>
+                    • {aurebeshAlphabet.length} characters to learn{'\n'}
+                    • Tap to reveal answers{'\n'}
+                    • Navigate with arrow buttons
+                  </Text>
+                </View>
               </View>
             </View>
           </>
@@ -423,16 +426,22 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8f9fa',
   },
   scrollContent: {
-    padding: 20,
     paddingBottom: 100, // Extra space to avoid content being hidden behind tab bar
   },
   header: {
     alignItems: 'center',
-    marginBottom: 30,
     paddingTop: 75,
+    paddingBottom: 30,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  contentSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   title: {
     fontSize: 28,
@@ -594,6 +603,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e1e5e9',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   settingIcon: {
     marginRight: 16,
@@ -656,8 +673,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 300,
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#e1e5e9',
+    borderWidth: 1,
+    borderColor: '#4f81cb',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -705,10 +722,20 @@ const styles = StyleSheet.create({
   },
   // Flashcard practice section styles
   flashcardSection: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 20,
-    marginTop: 20,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#e1e5e9',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionHeader: {
     flexDirection: 'row',
