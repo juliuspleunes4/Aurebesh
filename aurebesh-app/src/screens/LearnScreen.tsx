@@ -325,7 +325,7 @@ const LearnScreen: React.FC<LearnScreenProps> = ({ navigation }) => {
               accessibilityRole="button"
               accessibilityLabel="View Aurebesh alphabet reference"
             >
-              <MaterialIcons name="language" size={24} color="#ffd700" style={styles.settingIcon} />
+              <MaterialIcons name="language" size={24} color="#4f81cb" style={styles.settingIcon} />
               <View style={styles.settingText}>
                 <Text style={[styles.settingTitle, { fontFamily: getFontFamily() }]}>
                   Aurebesh Alphabet
