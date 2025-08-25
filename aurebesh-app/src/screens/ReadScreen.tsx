@@ -409,7 +409,8 @@ const ReadScreen: React.FC = () => {
         </Text>
       </View>
 
-      {/* Stats */}
+      {/* Stats - HIDDEN FOR NOW */}
+      {/* 
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={[styles.statNumber, { fontFamily: getFontFamily() }]}>{score}</Text>
@@ -424,6 +425,7 @@ const ReadScreen: React.FC = () => {
           <Text style={[styles.statLabel, { fontFamily: getFontFamily() }]}>Total</Text>
         </View>
       </View>
+      */}
 
       {/* Difficulty Selector */}
       <TouchableOpacity 
