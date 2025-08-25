@@ -384,12 +384,14 @@ const SettingsScreen: React.FC = () => {
       <View style={[styles.section, styles.dangerSection]}>
         <Text style={[styles.sectionTitle, styles.dangerTitle, { fontFamily: getFontFamily() }]}>Danger Zone</Text>
         
-        {/* Reset Statistics */}
+        {/* Reset Statistics - HIDDEN FOR NOW */}
+        {/* 
         <TouchableOpacity style={[styles.settingItem, styles.dangerItem]} onPress={handleResetStatistics}>
           <MaterialIcons name="refresh" size={24} color="#ff4444" style={styles.settingIcon} />
           <Text style={[styles.settingLabel, styles.dangerText, { fontFamily: getFontFamily() }]}>Reset Statistics</Text>
           <MaterialIcons name="chevron-right" size={20} color="#ff4444" />
         </TouchableOpacity>
+        */}
         
         {/* Delete Account */}
         <TouchableOpacity style={[styles.settingItem, styles.dangerItem]} onPress={handleDeleteAccount}>
