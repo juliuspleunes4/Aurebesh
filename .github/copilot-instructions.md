@@ -20,25 +20,25 @@ Aurebesh
 
 ## App Features
 
-### 1. Learn Aurebesh
+### 1. Read Aurebesh
 - Users see a word written in Aurebesh and they have enter the English equivalent.
 - Provide hints or tips for users who are struggling.
 - Include a "Show Answer" button to reveal the correct English translation.
 
-### 2. Write Aurebesh Page
+### 2. Write Aurebesh 
 - Users can convert English text to Aurebesh and Aurebesh to English.
 - Provide a text input for users to enter text.
 - Display the translated result in real-time.
 - Include a clear button and copy-to-clipboard functionality.
 - Use a well-documented utility function for translation logic.
 
-### 3. Read Aurebesh Page
+### 3. Learn Aurebesh 
 - Display Aurebesh characters and their English equivalents.
 - Allow users to practice reading by showing random Aurebesh words/phrases.
 - Include interactive elements (e.g., flashcards, quizzes).
 - All components and logic should be documented.
 
-### 4. Settings Page
+### 4. Settings 
 - Allow users to customize app preferences (e.g., theme, font size, account email, privacy settings, logout, etc.).
 - Store settings using Expo's recommended storage solution.
 - Document all settings logic and UI components.
@@ -47,7 +47,7 @@ Aurebesh
 
 - `src/`
 	- `components/` — Reusable UI components.
-	- `screens/` — Main app screens (Write, Read, Settings).
+	- `screens/` — Main app screens (Write, Learn, Settings).
 	- `utils/` — Utility functions (e.g., translation logic).
 	- `assets/` — Fonts, images, Aurebesh character SVGs.
 	- `types/` — TypeScript type definitions.

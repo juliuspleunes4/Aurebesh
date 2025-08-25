@@ -2,7 +2,8 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
-import { LearnScreen, WriteScreen, ReadScreen, SettingsScreen } from '../screens';
+import { WriteScreen, ReadScreen, SettingsScreen } from '../screens';
+import LearnStackNavigator from './LearnStackNavigator';
 import { useSettings } from '../context/SettingsContext';
 import { hapticLight } from '../utils/haptics';
 import { getFontFamily } from '../utils/fonts';
@@ -76,12 +77,12 @@ const TabNavigator: React.FC = () => {
       }}
     >
       <Tab.Screen
-        name="Learn"
-        component={LearnScreen}
+        name="Read"
+        component={ReadScreen}
         options={{
-          title: 'Learn',
+          title: 'Read',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="school" size={28} color={color} />
+            <MaterialIcons name="chrome-reader-mode" size={28} color={color} />
           ),
         }}
       />
@@ -96,12 +97,12 @@ const TabNavigator: React.FC = () => {
         }}
       />
       <Tab.Screen
-        name="Read"
-        component={ReadScreen}
+        name="Learn"
+        component={LearnStackNavigator}
         options={{
-          title: 'Read',
+          title: 'Learn',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="chrome-reader-mode" size={28} color={color} />
+            <MaterialIcons name="school" size={28} color={color} />
           ),
         }}
       />
