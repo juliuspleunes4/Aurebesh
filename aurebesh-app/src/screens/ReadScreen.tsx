@@ -8,7 +8,9 @@ import {
   Alert,
   ScrollView,
   Modal,
-  Animated
+  Animated,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -392,7 +394,12 @@ const ReadScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets={true}
+    >
       {/* Header */}
       <View style={styles.header}>
         <MaterialIcons name="chrome-reader-mode" size={48} color="#4f81cb" />
@@ -628,6 +635,9 @@ const ReadScreen: React.FC = () => {
   );
 };
 const styles = StyleSheet.create({
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
