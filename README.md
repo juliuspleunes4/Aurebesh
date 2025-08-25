@@ -114,7 +114,7 @@ aurebesh/
 
 6. **Start the development server**:
    ```bash
-   npm start
+   npx expo start --tunnel --clear
    ```
 
 7. **Run on your preferred platform**:
@@ -145,7 +145,7 @@ cp src/utils/supabase.ts.example src/utils/supabase.ts
 # Edit supabase.ts with your credentials
 
 # Step 3: Launch the app
-npm start
+npx expo start --tunnel --clear
 ```
 
 **That's it!** The app will open in Expo Go on your device or in your simulator. Create an account and start learning Aurebesh immediately.
