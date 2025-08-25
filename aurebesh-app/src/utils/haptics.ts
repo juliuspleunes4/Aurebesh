@@ -49,3 +49,6 @@ export const hapticSelection = (isEnabled: boolean = true) =>
 
 export const hapticNotification = (isEnabled: boolean = true) => 
   triggerHapticFeedback('notification', isEnabled);
+
+export const hapticSuccess = (isEnabled: boolean = true) => 
+  triggerHapticFeedback('notification', isEnabled);
